@@ -1,0 +1,48 @@
+@import '../../../settings';
+
+.member-list{
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    align-items: center;
+
+    .member-photo {
+        width: 10%;
+        
+        .photo{
+            display: grid;
+            place-items: center;
+            width: 40px;
+            height: 40px;
+            background-color: $navbar-board-bg-color;
+            border-radius: 100%;
+            div {
+                color: white;
+                font-weight: bold;
+                cursor: default;
+            }
+            
+        }
+    }
+
+    .member-name {  
+        width: 69%;
+        font-size: medium;
+        font-weight: 500;
+    }
+
+    .member-type {
+        width: 21%;
+        background-color: $list-bg-color;
+
+        &:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        &:hover {
+            cursor: pointer;
+            background-color: $hover-button;
+        }
+    }
+}

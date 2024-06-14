@@ -1,0 +1,114 @@
+@import '../../settings';
+
+.navbar-app {
+    padding-left: $gap;
+    padding-bottom: $gap;
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    background-color: $navbar-app-bg-color;
+    color: $list-bg-color;
+    width: 100%;
+    border-bottom: 1px solid $border-color;
+
+    span {
+        width: 95%;
+
+        a {
+            color: white;
+            text-decoration: none;
+
+        }
+    }
+
+    #notif-cof {
+        margin-top: 5px;
+        font-size: medium;
+        width: 27px;
+        margin-right: 5px;
+        border: none;
+        border-radius: $icon-border-radius;
+        background-color: rgba(0, 0, 0, 0);
+        color: $list-bg-color;
+        
+        &:hover{
+            background-color: $hover-icon;
+        }
+    }
+
+    .dropdown{
+        margin-top: 3px;
+        margin-right: 10px;
+
+        .dropdown-toggle {
+            background-color: inherit;
+            border: none;
+            border-radius: $icon-border-radius;
+            padding: 1px 1px 1px 6px;
+            --bs-btn-padding-x: 0rem;
+            --bs-btn-padding-y: 0rem;
+            
+            &::after {
+                content: '';
+                border: none !important;
+                outline: none !important;
+                box-shadow: none !important;
+                background-color: white;
+            }
+    
+            &:hover {
+                background-color: $hover-icon;
+            }
+        }
+    
+        .dropdown-menu {
+            width: 300px;
+            margin-left: 7px;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-bottom: 15px;
+
+            .modal-header {
+                color: black;
+                border-bottom: none;
+                font-weight: bold;
+                height: 40px;
+                text-align: center;
+                display: block;
+                padding: 5px;
+
+                .bi-x {
+                    float: right;
+                    cursor: pointer;
+                    font-size: larger;
+                    padding: 3px;
+                    margin-top: -3px;
+                    background-color: inherit;
+                    border: none;
+                    
+                    &:hover{
+                        border-radius: 5px;
+                        background-color: rgba(128, 128, 128, 0.100);
+                    }
+                }
+            }
+
+            .sub-title{
+                font-weight: 500;
+                font-size: 15px;
+            }
+
+            span {
+                font-size: 15px;
+                margin-left: 5px;
+            }
+        }
+    }
+
+
+    @media (max-width: $screen-phone){
+        #title-navbar {
+          font-size: 20px;
+        }
+    }
+}

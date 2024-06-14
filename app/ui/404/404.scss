@@ -1,0 +1,23 @@
+#NotFound{
+    display:flex;
+    height: 92.1vh;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+
+    #Title{
+        width: 50%;
+        text-align: center;
+        
+        button {
+            background-color: blue;
+            color: white;
+            width: 20%;
+
+            &:hover{
+                background-color: rgba(0, 0, 255, 0.705);
+            }
+        }
+    }
+
+}

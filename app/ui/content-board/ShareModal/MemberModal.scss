@@ -1,0 +1,37 @@
+@import '../../../settings';
+
+.modal-content {
+    .modal-header{
+        margin-bottom: -10px;
+        border-bottom: none;
+
+        .modal-title{
+            font-size: large;
+            font-weight: normal;    
+        }
+    }
+
+    #share-modal-body{
+
+        .section{
+            display: flex;
+
+            #select-member {
+                width: 85%;
+            }
+
+            // #member-type{
+            //     width: 15%;
+            // }
+
+            #btn-submit{
+                margin-left: 10px;
+                width: 15%;
+            }
+        }
+    }
+
+    .modal-footer{
+
+    }
+}

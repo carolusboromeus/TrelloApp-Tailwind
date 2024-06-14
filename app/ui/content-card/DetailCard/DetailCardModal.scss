@@ -1,0 +1,393 @@
+@import '../../../settings';
+
+.modal-backdrop {
+    position: fixed !important; /* or unset */
+}
+
+#modal {
+    background-color: $list-bg-color;
+    border-radius: $column-border-radius;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    #modal-header {
+        border-bottom: none;
+
+        .group-btn {
+            display: flex;
+            align-items: center;
+
+            .icon {
+                width: 10%;
+                color: rgb(46, 46, 46);
+                font-size: 25px;
+            }
+
+            .customize-input-column{
+                width: 90%;
+                border: none;
+                cursor: pointer;
+                margin-left: 10px;
+                font-size: large;
+                font-weight:500;
+                width: max-content;
+            
+                &:focus {
+                    //outline: none !important;
+                    box-shadow: none !important;
+                    border-bottom: .1px black inset;
+                }
+            
+                background-color:  inherit;
+            }
+        }
+            
+        #list{
+            margin-left: 43px;
+            font-size: small;
+        }
+
+        .btn-close {
+            margin-top: -35px;
+        }
+    }
+
+    #modal-body {
+        .group-btn {
+            display: flex;
+            align-items: center;
+            
+            .btnDescription {
+                margin-top: 0px;
+            }
+
+            .icon {
+                color: rgb(46, 46, 46);
+                font-size: 25px;
+            }
+    
+            h6{
+                margin-top: 7px;
+                margin-left: 15px;
+            }
+
+            button{
+                margin-top: 10px;
+
+                &:last-child {
+                    margin-left: 10px;
+                }
+            }
+
+            #numberProgress{
+                margin-right: 10px;
+                font-size: small;
+                
+            }
+
+            #myProgress {
+                margin: auto;
+                width: 100%;
+                background-color: hsla(0, 0%, 100%, 0.7);
+                border-radius: 30px;
+                height: 10px;
+                
+                #myBar {
+                    width: 0%;
+                    height: 10px;
+                    border-radius: 30px;
+                    background-color: $navbar-board-bg-color;
+                }
+            }
+        }
+
+        #progress-bar {
+            margin-top: 10px;
+        }
+
+        #checklist-title {
+            margin-top: 20px;
+
+            .btnHide {
+                margin-top: -3px;
+            }
+        }
+
+        .custom-file {
+            margin-top: -35px;
+            margin-right: 10px;
+            float: right;
+
+            .icon-fileUpload {
+                margin: $gap;
+
+                &:first-child {
+                    
+                    font-weight: bold;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: blue;
+                    }
+                }
+            }
+
+            #fileUpload {
+                display: none;
+                visibility: none;
+            }
+        }
+
+        .section {
+            margin-left: 40px;
+
+            #quill-description {
+                margin-bottom: 10px;
+                background-color: white;
+                border-radius: $column-border-radius;
+                width: 100%;
+
+                .ql-container {
+                    border: none !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                    border-top-left-radius: $column-border-radius;
+                    border-top-right-radius: $column-border-radius;
+                    border-end-start-radius: $column-border-radius;
+                    border-end-end-radius: $column-border-radius;
+                }
+
+                p{
+                    cursor: pointer;
+                }
+            }
+
+            .input-checklist {
+                margin-top: 10px;
+            }
+
+            #comment {
+                background-color: white;
+                margin-top: 50px;
+                margin-bottom: 10px;
+                font-size: small;
+                padding: $gap;
+                border-radius: $input-border-radius;
+                height: 40px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: whitesmoke;
+                    border-bottom: 0.1px solid gray;
+                }
+            }
+        }
+        
+        #section-checklist{
+            margin-top: 10px;
+        }
+
+        .quill {
+            background-color: white;
+            border-radius: $column-border-radius;
+ 
+            .ql-toolbar {
+                border-top-left-radius: $column-border-radius;
+                border-top-right-radius: $column-border-radius;
+            }
+ 
+            .ql-container {
+                border-end-start-radius: $column-border-radius;
+                border-end-end-radius: $column-border-radius;
+            }
+        }
+
+        #edit-description-quill{
+            width: 100%;
+
+            .text-editor {
+                background-color: white;
+                border-radius: $column-border-radius;
+     
+                .ql-toolbar {
+                    border-top-left-radius: $column-border-radius;
+                    border-top-right-radius: $column-border-radius;
+                }
+    
+                .ql-container{
+                    border-bottom-left-radius: $column-border-radius;
+                    border-bottom-right-radius: $column-border-radius;
+                }
+    
+            }
+        }
+
+        #quill-comment-edit{
+            width: 100%;
+
+            .ql-toolbar {
+                background-color: white;
+                margin-top: 40px;
+                border-top-left-radius: $column-border-radius;
+                border-top-right-radius: $column-border-radius;
+            }
+
+            .ql-container{
+                background-color: white;
+                border-bottom-left-radius: $column-border-radius;
+                border-bottom-right-radius: $column-border-radius;
+            }
+        }
+
+        #label-members{
+            margin-left: 40px;
+            font-weight: 500;
+            font-size: small;
+        }
+
+        .display-photo{
+            margin-left: 40px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+
+            .member-photo {
+                margin-left: -1px;
+                
+                .photo{
+                    display: grid;
+                    place-items: center;
+                    width: 35px;
+                    height: 35px;
+                    background-color: $navbar-board-bg-color;
+                    border-radius: 100%;
+                    border: 2px solid $list-bg-color;
+
+                    div {
+                        color: $list-bg-color;
+                        font-size: 12px;
+                        font-weight: bold;
+                        cursor: default;
+                    }   
+                }
+            }
+
+            #icon-add-member {
+                margin-left: 2px;
+                width: 35px;
+                height: 35px;
+                border-radius: 100%;
+                justify-content: center;
+                display: flex;
+                align-items: center;
+                background-color: #bdbdbd60;
+                
+                &:hover {
+                    cursor: pointer;
+                    background-color: #bdbdbd9d;
+                }
+
+                #button-modal{
+                    background-color: #00000000;
+                    border: none;
+
+                    &::after {
+                        content: '';
+                        border: none !important;
+                        outline: none !important;
+                        box-shadow: none !important;
+                    }
+
+                    i {
+                        margin-left: 3px;
+                        text-align: center;
+                        color: black;
+                    }
+                }
+            }
+        }
+    }
+    
+    .modal-dropdown{
+        .modal-dropdown-button {
+            background-color: whitesmoke;
+            border: none;
+            width: 100%;
+            text-align: left;
+            border-radius: 7px;
+            align-items: center;
+            margin-bottom: 7px;
+
+            &::after {
+                content: '';
+                border: none !important;
+                outline: none !important;
+                box-shadow: none !important;
+            }
+
+            .icon-group {
+                color: black;
+                margin-left: -5px;
+                text-align: left;
+                font-size: 15px;
+                font-weight: 400;
+                
+                cursor: pointer;
+                border: none;
+
+                .icon {
+                    margin-right: 10px;
+                }
+            }
+
+            &:hover {
+                background-color: white;
+            }
+        }
+
+        .modal-dropdown-body {
+            width: 300px;
+            margin-left: 0px;
+            padding-left: 15px;
+            padding-right: 15px;
+
+            .modal-header {
+                color: black;
+                border-bottom: none;
+                font-weight: bold;
+                height: 40px;
+                text-align: center;
+                padding-top: $gap;
+                display: block;
+                margin-bottom: 10px;
+                
+
+                .bi-x {
+                    float: right;
+                    cursor: pointer;
+                    font-size: larger;
+                    padding: 3px;
+                    margin-top: -3px;
+                    margin-right: -20px;
+                    background-color: inherit;
+                    border: none;
+                    
+                    &:hover{
+                        border-radius: 5px;
+                        background-color: rgba(128, 128, 128, 0.100);
+                    }
+                }
+            }
+
+            .input-form {
+                outline: none !important;
+                box-shadow: none !important;
+            }
+
+            .btn {
+                margin-top: 5px;
+                float: right;
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+@import '../../../settings';
+
+.pagination-controls {
+    text-align: center;
+    width: 100%;
+
+    button {
+        border: 1px solid gray;
+        border-radius: 100%;
+        background-color: $list-bg-color;
+        margin: 5px 2px 5px 2px ;
+        color: black;
+        font-size: small;
+        width: 27px;
+        height: 27px;
+        
+        &:hover {
+            color: white;
+            border: none;
+            background-color: $navbar-app-bg-color;
+        }
+    }
+
+    .active {
+        color: white;
+        border: 1px solid $navbar-board-bg-color;
+        background-color: $navbar-app-bg-color;
+    }
+}
