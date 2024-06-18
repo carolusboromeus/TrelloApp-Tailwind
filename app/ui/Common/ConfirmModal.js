@@ -1,7 +1,5 @@
 import { MODAL_ACTION_CLOSE, MODAL_ACTION_CONFIRM } from '@/app/utilities/constant';
 
-// import Modal from 'react-bootstrap/Modal';
-// import Button from 'react-bootstrap/Button';
 import { Button, Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
 import parse from 'html-react-parser';
 import PropTypes from 'prop-types';
@@ -32,13 +30,13 @@ const ConfirmModal =  (props) => {
                             </p>
                             <div className="mt-4">
                                 <Button
-                                    className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-black shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
+                                    className="inline-flex items-center gap-2 rounded-md bg-gray-500 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-400 data-[hover]:text-black data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
                                     onClick={() => {onAction(MODAL_ACTION_CLOSE)}}
                                 >
                                     Cancel
                                 </Button>
                                 <Button
-                                    className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-black shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
+                                    className="ml-2 inline-flex items-center gap-2 rounded-md bg-board-bg-color py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-400 data-[hover]:text-black data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white"
                                     onClick={() => {onAction(MODAL_ACTION_CONFIRM)}}
                                 >
                                     Confirm
@@ -50,21 +48,6 @@ const ConfirmModal =  (props) => {
                 </div>
             </Dialog>
         </Transition>
-
-        // <Modal show={show} onHide={() => onAction(MODAL_ACTION_CLOSE)} backdrop="static" centered>
-        //     <Modal.Header closeButton>
-        //         <Modal.Title>{title}</Modal.Title>
-        //     </Modal.Header>
-        //     <Modal.Body>{parse(content)}</Modal.Body>
-        //     <Modal.Footer>
-        //         <Button variant="secondary" onClick={() => onAction(MODAL_ACTION_CLOSE)}>
-        //             Close
-        //         </Button>
-        //         <Button variant="primary" onClick={() => onAction(MODAL_ACTION_CONFIRM)}>
-        //             Confirm
-        //         </Button>
-        //     </Modal.Footer>
-        // </Modal>
     );
 }
 

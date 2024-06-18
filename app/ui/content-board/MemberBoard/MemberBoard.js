@@ -5,9 +5,7 @@ import ConfirmModal from '@/app/ui/Common/ConfirmModal';
 import { MODAL_ACTION_CLOSE, MODAL_ACTION_CONFIRM } from '@/app/utilities/constant';
 import { getFirstLetters } from '@/app/utilities/function';
 
-import "./MemberBoard.scss";
 import {useState, useEffect, useRef} from 'react';
-import Form from 'react-bootstrap/Form';
 import PropTypes from 'prop-types';
 
 const MemberBoard = ((props) => {
@@ -80,16 +78,16 @@ const MemberBoard = ((props) => {
 
     return (
         <>
-            <div className="member-list">
-                <div className="member-photo" title={member.name}>
-                    <div className="photo" style={{backgroundColor: board.background.hex}}>
-                        <div>
+            <div id="share-modal" className="flex mt-5 items-center">
+                <div className="w-1/12" title={member.name}>
+                    <div className="grid place-items-center w-10 h-10 bg-navbar-board-bg-color rounded-full" style={{backgroundColor: board.background.hex}}>
+                        <div className='text-white font-bold cursor-default'>
                             {getFirstLetters(member.name)}
                         </div>
                     </div>
                 </div>
-                <div className="member-name">{member.name}</div>
-                <Form.Select className="member-type" size="sm" 
+                <div className="w-9/12 text-base font-medium">{member.name}</div>
+                <select className="w-3/12 p-1 rounded-sm focus:outline focus:outline-blue-400"
                     ref={selectMemberTypeRef}
                     onChange={(event) => handleChangeMemberType(event.target.value)}
                     value={memberType}
@@ -97,7 +95,7 @@ const MemberBoard = ((props) => {
                     <option value="Member">Member</option>
                     <option value="Admin">Admin</option>
                     <option value="Remove">Remove from board</option>
-                </Form.Select>
+                </select>
             </div>
         
             <ConfirmModal

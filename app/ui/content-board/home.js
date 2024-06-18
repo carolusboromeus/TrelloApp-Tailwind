@@ -1,7 +1,7 @@
 'use client'
 
 import BoardBar from "@/app/ui/content-board/BoardBar/BoardBar";
-import BoardContent from "@/app/ui/content-board/BoardContent/BoardContent";
+// import BoardContent from "@/app/ui/content-board/BoardContent/BoardContent";
 import { mapOrder } from "@/app/utilities/sorts";
 import { useVisibility } from '@/app/home';
 import { getData } from "@/app/lib/api";
@@ -55,19 +55,19 @@ const Home = ({params}) => {
     useEffect(() => {
         if (typeof document !== 'undefined' && board && !loading) {
             // Your code that uses document here
-            const background = document.getElementsByClassName("trello-master");
-            background[0].style.backgroundColor = board.background.hex;
+            // const background = document.getElementsByClassName("trello-master");
+            // background[0].style.backgroundColor = board.background.hex;
 
-            const color = `rgb(${(board.background.rgb.r-20)}, ${board.background.rgb.g-20}, ${board.background.rgb.b-20})`;
-            document.getElementsByClassName("navbar-board")[0].style.backgroundColor = color;
-            document.getElementsByClassName("navbar-app")[0].style.backgroundColor = color;
-            if(!isSmallScreen){
-                document.getElementsByClassName("sidebar")[0].style.backgroundColor = color;
-            } else if(isSmallScreen){
-                document.getElementById("sidebar-title").style.backgroundColor = color;
-                document.getElementById("boards-rows").style.backgroundColor = color;
-                document.getElementsByClassName("sidebar")[0].style.backgroundColor = null;
-            }
+            // const color = `rgb(${(board.background.rgb.r-20)}, ${board.background.rgb.g-20}, ${board.background.rgb.b-20})`;
+            // document.getElementsByClassName("navbar-board")[0].style.backgroundColor = color;
+            // document.getElementsByClassName("navbar-app")[0].style.backgroundColor = color;
+            // if(!isSmallScreen){
+            //     document.getElementsByClassName("sidebar")[0].style.backgroundColor = color;
+            // } else if(isSmallScreen){
+            //     document.getElementById("sidebar-title").style.backgroundColor = color;
+            //     document.getElementById("boards-rows").style.backgroundColor = color;
+            //     document.getElementsByClassName("sidebar")[0].style.backgroundColor = null;
+            // }
         }
     }, [board, loading, isSmallScreen])
 
@@ -79,7 +79,7 @@ const Home = ({params}) => {
         return (
             <>
                 <BoardBar params={params} board={board} setBoard={setBoard}/>
-                <BoardContent params={params} board={board} columns={columns} setBoard={setBoard} setColumns={setColumns}/>
+                {/* <BoardContent params={params} board={board} columns={columns} setBoard={setBoard} setColumns={setColumns}/> */}
             </>
         )
     }

@@ -6,19 +6,96 @@ import MemberModal from '@/app/ui/content-board/ShareModal/MemberModal';
 import { MODAL_ACTION_CLOSE, MODAL_ACTION_CONFIRM } from '@/app/utilities/constant';
 import { getFirstLetters } from '@/app/utilities/function';
 
-import './BoardBar.scss';
 import { useState, useEffect, useRef} from 'react';
-import Dropdown from 'react-bootstrap/Dropdown';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
+import { Input } from '@headlessui/react';
+import clsx from 'clsx'
 import PropTypes from 'prop-types';
+
+const DropdownToggle = (props) => {
+    const {board, setBoard, setBoards} = props;
+    const [show, setShow] = useState(false);
+    const dropdownRef = useRef(null);
+
+    const contents = [
+        {
+            id: "01",
+            name: 'Private', 
+            description: 'Only board admins can see and edit this board.'
+        },
+        {
+            id: "02",
+            name: 'Workspace', 
+            description: 'Only board members can see and edit this board. /n Admins can close the board or remove members.'
+        },
+    ];
+
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShow(false);
+            }
+        };
+    
+        document.addEventListener('mousedown', handleOutsideClick);
+    
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, []);
+    
+    return (
+        <div className="relative sm:flex text-list-bg-color" ref={dropdownRef}>
+            {/* Dropdown toggle button */}
+            <button className="p-1 hover:bg-hover-icon hover:rounded-md" onClick={() => setShow(true)}>
+                {board.visibility === "Private" &&
+                    <i className='bi bi-lock icon'></i>
+                }
+                {board.visibility === "Workspace" &&
+                    <i className='bi bi-people icon'></i>
+                }
+            </button>
+
+            {/* Dropdown menu */}
+            {show && (
+                <div className="absolute left-0 mt-7 w-72 bg-list-bg-color border rounded-md shadow-lg px-2">
+                    <div className='flex w-full px-3 py-3 text-sm'>
+                        <div className='text-black font-semibold w-full text-center'>Change visibility</div>
+                        <button className='text-end w-1/12' onClick={() => setShow(false)}>
+                            <i className='bi bi-x text-black  hover:rounded-md hover:bg-hover-button p-1'></i>
+                        </button>
+                    </div>
+                    <div className='mb-2 cursor-pointer'>
+                        {contents.map((content) => {
+                            return (
+                                <div key={content.id} className='text-black px-2 py-2 hover:bg-hover-button hover:rounded-md' onClick={async () => {
+                                    const value = await UpdateVisibility(content.name, board);
+                                    setBoards(value.boardsR);
+                                    setBoard(value.newBoard);
+                                }}>
+                                    <div className='text-sm font-normal'>
+                                        <i className={`${content.name === "Private" ? "bi bi-lock" : "bi bi-people"} mr-3`}></i>{content.name}{board.visibility === content.name && <i className='bi bi-check float-end'></i>}
+                                    </div>
+                                    <div className='text-xs text-black/70 mt-1'>{content.description}</div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+
+DropdownToggle.propTypes = {
+    board: PropTypes.object.isRequired,
+    setBoard: PropTypes.func.isRequired,
+    setBoards: PropTypes.func.isRequired
+};
 
 const BoardBar = (props) => {
     const { setBoards } = useVisibility();
 
     const {board, setBoard} = props;
-    const [show, setShow] = useState(false);
     const [modalMember, setModalMember] = useState(false);
 
     const onModalAction = (type) => {
@@ -33,26 +110,20 @@ const BoardBar = (props) => {
     //Change name board
     const [titleBoard, setTitleBoard] = useState("");
     const [isFirstClick, setIsFirstClick] = useState(true);
-    const [showInputTitle, setShowInputTitle] = useState(false);
     const inputTitleRef = useRef(null);
 
     useEffect(() => {
-        if(showInputTitle){
-            if(board !== null && board.title) {
-                setTitleBoard(board.title);
-            }
-    
-            if(inputTitleRef.current) {
-                inputTitleRef.current.style.width = (board.title.length + 2.2) * 8 + "px";
-                inputTitleRef.current.select();
-            }
+        if(board !== null && board.title) {
+            setTitleBoard(board.title);
+            inputTitleRef.current.style.width = (inputTitleRef.current.value.length + 2.2) * 8 + "px";
         }
-    }, [board, showInputTitle])
+    }, [board, inputTitleRef])
 
     const selectAllText = (event) => {
         setIsFirstClick(false);
         
         if(isFirstClick) {
+            event.target.style.width = (event.target.value.length + 2.2) * 8 + "px";
             event.target.select();
         } else {
             inputTitleRef.current.setSelectionRange(titleBoard.length, titleBoard.length);
@@ -72,76 +143,42 @@ const BoardBar = (props) => {
         const value = await UpdateBoard(newBoard);
         setBoard(newBoard);
         setBoards(value);
-        setShowInputTitle(false);
     }
 
     if(board){
         return(
-            <nav className="navbar-board">
-                <Row>
-                    <Col sm={6} className='section'>
-                        {!showInputTitle &&
-                            <button className="name-board" onClick={() => setShowInputTitle(true)}>{board.title}</button>
-                        }
-                        {showInputTitle &&
-                            <input 
-                                size="md"
-                                type="text"
-                                value={titleBoard}
-                                className='input-board'
-                                onClick={selectAllText}
-                                onChange={(event) => {
-                                    setTitleBoard(event.target.value);
-                                    event.target.style.width = (event.target.value.length + 2.2) * 8 + "px";
-                                }}
-                                spellCheck="false"
-                                onBlur={handleClickOutside}
-                                onMouseDown={(e) => e.preventDefault()}
-                                ref={inputTitleRef}
-                            />
-                        }
-                        <Dropdown className='modal-dropdown' show={show} onToggle={(isOpen) => setShow(isOpen)}>
-                            <Dropdown.Toggle className='modal-dropdown-button' size='sm' title='Change visibility'>
-                                {board.visibility === "Private" &&
-                                    <i className='bi bi-lock icon'></i>
-                                }
-                                {board.visibility === "Workspace" &&
-                                    <i className='bi bi-people icon'></i>
-                                }
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu className='modal-dropdown-body'>
-                                <Dropdown.Header className='modal-header'>Attach a file from your computer<button className='bi bi-x' onClick={() => setShow(false)}></button></Dropdown.Header>
-                                <Dropdown.Item eventKey="1" onClick={async () => {
-                                    const value = await UpdateVisibility("Private", board);
-                                    setBoards(value.boardsR);
-                                    setBoard(value.newBoard);
-                                }}>
-                                    <div className='icon-group'>
-                                        <i className='bi bi-lock icon'></i>Private{board.visibility === "Private" && <i className='bi bi-check'></i>}
-                                    </div>
-                                    <div className='information'>Only board admins can see and edit this board.</div>
-                                </Dropdown.Item>
-                                <Dropdown.Item eventKey="2" style={{marginTop: '5px'}} onClick={async () => {
-                                    const value = await UpdateVisibility("Workspace", board);
-                                    setBoards(value.boardsR);
-                                    setBoard(value.newBoard);
-                                }}>
-                                    <div className='icon-group'>
-                                        <i className='bi bi-people icon'></i>Workspace{board.visibility === "Workspace" && <i className='bi bi-check'></i>}
-                                    </div>
-                                    <div className='information'>Only board members can see and edit this board.<br></br>Admins can close the board or remove members.</div>
-                                </Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </Col>
-                    <Col sm={6}>
-                        <div className='display-right'>
-                            <div className='display-photo'>
+            <nav className="navbar-board px-gap bg-navbar-app-bg-color mb-gap border-y border-border-color">
+                <div className='grid grid-cols-2 py-1'>
+                    <div className='-ml-1 flex items-center'>
+                        <Input
+                            className={clsx(
+                                'appearance-none rounded-md bg-inherit py-2 px-2 text-list-bg-color font-bold leading-tight',
+                                'focus:outline-none focus:shadow-xl focus:bg-list-bg-color focus:text-black focus:font-medium focus:w-auto'
+                            )}
+                            type="text"
+                            name='title' 
+                            autoComplete='false' 
+                            spellCheck='false'
+                            value={titleBoard}
+                            onClick={selectAllText}
+                            onChange={(event) => {
+                                setTitleBoard(event.target.value);
+                                event.target.style.width = (event.target.value.length + 2.2) * 8 + "px";
+                            }}
+                            onBlur={handleClickOutside}
+                            onMouseDown={(e) => e.preventDefault()}
+                            ref={inputTitleRef}
+                        />
+                        <DropdownToggle board={board} setBoard={setBoard} setBoards={setBoards} />
+                    </div>
+                    <div className='content-center'>
+                        <div className='flex float-right'>
+                            <div className='flex'>
                                 {board.member && board.member.length > 0 && board.member.toReversed().map((member, index) => {
                                     return (
-                                        <div className="member-photo" title={member.name} key={member._id}>
-                                            <div className="photo" style={{backgroundColor: board.background.hex}}>
-                                                <div>
+                                        <div className="mr-2" title={member.name} key={member._id}>
+                                            <div className="grid place-items-center p-1 w-7 h-7 rounded-full bg-navbar-board-bg-color border-2 border-list-bg-color" style={{backgroundColor: board.background.hex}}>
+                                                <div className='text-list-bg-color text-xs font-bold cursor-default'>
                                                     {getFirstLetters(member.name)}
                                                 </div>
                                             </div>
@@ -151,21 +188,20 @@ const BoardBar = (props) => {
                             </div>
                             {board.visibility === "Workspace" && 
                                 <>
-                                    <Button className='badge group-btn' onClick={() => setModalMember(true)}>
-                                        <i className='bi bi-person-add icon'></i>Share
-                                    </Button>
+                                    <button className='bg-list-bg-color p-1 rounded-md hover:bg-hover-icon hover:text-white' onClick={() => setModalMember(true)}>
+                                        <i className='bi bi-person-add mr-1'></i>Share
+                                    </button>
                                     <MemberModal
                                         onAction={onModalAction}
                                         show={modalMember}
                                         board={board}
-                                        onHide={() => setModalMember(false)}
                                         setBoard={setBoard}
                                     />
                                 </>
                             }
                         </div>
-                    </Col>
-                </Row>
+                    </div>
+                </div>
             </nav>
         )
     }

@@ -55,13 +55,13 @@ const Board = ((props) => {
                 <div className='w-full flex items-center p-1'>
                     <div className=" w-6 h-5 mr-2 rounded border border-black/50" style={{backgroundColor: board.background.hex}}></div>
                     <Link href={`/b/${board._id.slice(6, 14)}/${board.title.toLowerCase().replace(/ /g, "-")}`} className='w-full text-left'>
-                        <label className="board-label">{board.title}</label>
+                        <label className="board-label cursor-pointer">{board.title}</label>
                     </Link>
                 </div>
                 {showIcon && 
-                    <button className="p-1 rounded-md hover:bg-hover-button" onClick={() => toggleModel()}>
+                    <div className="p-1 rounded-md hover:bg-hover-button" onClick={() => toggleModel()}>
                         <i className='bi bi-trash icon text-xs'></i>
-                    </button>
+                    </div>
                 }
             </button>
 

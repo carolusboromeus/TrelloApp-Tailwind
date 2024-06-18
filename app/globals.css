@@ -26,4 +26,8 @@ body {
       background-clip: padding-box;
     }
   }
+
+  #sidebar-title {
+    padding-bottom: 6px;
+  }
 }
