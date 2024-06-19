@@ -2,10 +2,7 @@ import { UpdateCard } from '@/app/ui/buttons';
 import { useVisibility } from '@/app/home';
 import { getFirstLetters, adjustHeight } from '@/app/utilities/function';
 
-import './Card.scss';
 import React, { useState, useRef, useEffect, Suspense } from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import dateFormat from "dateformat";
 import { useRouter } from 'next/navigation'
 import PropTypes from 'prop-types'
@@ -97,65 +94,69 @@ const Card = (props) => {
     return (
         <>
             {isShowEditCard === false &&
-                <div className="card-item"
+                <div className="bg-white p-gap rounded-md shadow cursor-pointer mb-gap break-words mx-1 ml-3"
                     onMouseEnter={() => setIsShown(true)}
                     onMouseLeave={() => setIsShown(false)}
                 >
                     {card.image && 
-                        <img className="card-cover" src={card.image} alt="Cover"
+                        <img className="card-cover block w-[calc(100%+2*10px)] -mt-gap mb-gap -ml-gap rounded-t-md" src={card.image} alt="Cover"
                             onMouseDown={event => event.preventDefault()}
                             onClick={() => router.push(`/c/${card.boardId.slice(6, 14)}/${card._id.slice(6, 14)}/${card.title.toLowerCase().replace(/ /g, "-")}`)}
                         />
                     }
-                    {isShown === true && <button className='bi-pencil-square icon text-end edit' onClick={() => showEdit()}></button>}
-                    <div id='text' onClick={() => router.push(`/c/${card.boardId.slice(6, 14)}/${card._id.slice(6, 14)}/${card.title.toLowerCase().replace(/ /g, "-")}`)}>
-                        <p className='card-title'>{card.title}</p>
-                        <Row>
-                            <Col sm={12}>
-                                <div className='icon-group'>
-                                    {(card.description !== null && card.description.ops.length > 0 ) && 
-                                        <i className='bi-justify-left icon-description' title="This card has a description"></i>
-                                    }
-                                    {card.comments.length > 0 && 
-                                        <div className='icon-show' title="Comments">
-                                            <i className='bi-chat-left icons'></i>
-                                            <div className='text'>{card.comments.length}</div> 
-                                        </div>   
-                                    }
-                                    {card.files.length > 0 && 
-                                        <div className='icon-show' title="Attachments">
-                                            <i className='bi-paperclip icons'></i>
-                                            <div className='text'>{card.files.length}</div> 
-                                        </div>   
-                                    }
-                                    {card.checklist.length > 0 && 
-                                        <div className='icon-show' title="Checklist items">
-                                            <i className='bi-check2-square icons'></i>
-                                            <div className='text'>{checkList()}/{card.checklist.length}{dueDateList()}</div> 
-                                        </div>   
-                                    }
+                    <div id='text' className='flex'>
+                        <div className='w-11/12' onClick={() => router.push(`/c/${card.boardId.slice(6, 14)}/${card._id.slice(6, 14)}/${card.title.toLowerCase().replace(/ /g, "-")}`)}>
+                            <p className='card-title'>{card.title}</p>
+                            <div className='grid sm:grid-cols-2'>
+                                <div className='sm:col-span-1'>
+                                    <div className='flex'>
+                                        {(card.description !== null && card.description.ops.length > 0 ) && 
+                                            <i className='bi-justify-left icon-description' title="This card has a description"></i>
+                                        }
+                                        {card.comments.length > 0 && 
+                                            <div className='flex' title="Comments">
+                                                <i className='bi-chat-left icons'></i>
+                                                <div className='text-sm ml-2 mr-3'>{card.comments.length}</div> 
+                                            </div>   
+                                        }
+                                        {card.files.length > 0 && 
+                                            <div className='flex' title="Attachments">
+                                                <i className='bi-paperclip icons'></i>
+                                                <div className='text-sm ml-2 mr-3'>{card.files.length}</div> 
+                                            </div>   
+                                        }
+                                        {card.checklist.length > 0 && 
+                                            <div className='flex' title="Checklist items">
+                                                <i className='bi-check2-square icons'></i>
+                                                <div className='text-sm ml-2 mr-3'>{checkList()}/{card.checklist.length}{dueDateList()}</div> 
+                                            </div>   
+                                        }
+                                    </div>
                                 </div>
-                            </Col>
-                            <Col sm={12}>
-                                <div id='member-card-display'>
-                                    {card && card.member.length > 0 &&
-                                        <div className='display-photo'>
-                                            {card.member && card.member.length > 0 && card.member.map((member, index) => {
-                                                return (
-                                                    <div className="member-photo" title={member.name} key={member._id}>
-                                                        <div className="photo" style={{backgroundColor: board.background.hex}}>
-                                                            <div>
-                                                                {getFirstLetters(member.name)}
+                                <div className='sm:col-span-1'>
+                                    <div id='member-card-display' className='flex content-end'>
+                                        {card && card.member.length > 0 &&
+                                            <div className='flex'>
+                                                {card.member && card.member.length > 0 && card.member.map((member, index) => {
+                                                    return (
+                                                        <div className="member-photo" title={member.name} key={member._id}>
+                                                            <div className="grid place-items-center w-6 h-6 bg-navbar-board-bg-color rounded-full border-2 border-list-bg-color" style={{backgroundColor: board.background.hex}}>
+                                                                <div className='text-list-bg-color text-xs font-bold cursor-default'>
+                                                                    {getFirstLetters(member.name)}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    }
+                                                    )
+                                                })}
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
-                            </Col>
-                        </Row>
+                            </div>
+                        </div>
+                        <div className='w-1/12 text-right float-end'>
+                            {isShown === true && <button className='bi-pencil-square icon text-end edit' onClick={() => showEdit()}></button>}
+                        </div>
                     </div>
                     {params && params.card_id !== null && params.card_id === card._id.slice(6, 14) &&
                         <Suspense fallback={<></>}>
@@ -167,10 +168,10 @@ const Card = (props) => {
                 </div>
             }
             {isShowEditCard === true &&
-                <div className='edit-card'>
+                <div className='ml-3 mr-1 pb-3'>
                     <textarea 
                         rows='2'
-                        className='form-control'
+                        className='resize-none py-1 px-2 w-full rounded-md'
                         placeholder='Enter a title for this card...'
                         ref={textAreaRef}
                         value={valueTextArea}
@@ -188,15 +189,15 @@ const Card = (props) => {
                         spellCheck='false'
                     >
                     </textarea>
-                    <div className='group-btn'>
+                    <div className='pt-2 flex items-center'>
                         <button 
-                            className='btn badge btn-primary'
+                            className='px-2 py-1 rounded-md font-bold bg-green-600 text-white hover:bg-hover-button hover:text-black'
                             onClick={() => handleEditCard()}
                         >Save</button>
                         {/* <i className='bi-x icon' onClick={() => closeEdit()}></i> */}
                         <button 
                             id='btn-delete'
-                            className='btn badge btn-danger'
+                            className='ml-2 px-2 py-1 rounded-md font-bold bg-red-600 text-white hover:bg-hover-button hover:text-black'
                             onClick={() => handleDeleteCard()}
                         >Delete Card</button>
                     </div>

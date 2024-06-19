@@ -5,7 +5,7 @@ import { CreateColumn, UpdateOrder } from '@/app/ui/buttons';
 import { useVisibility } from '@/app/home';
 import { applyDrag } from '@/app/utilities/dragDrop';
 
-import './BoardContent.scss'
+// import './BoardContent.scss'
 import { useState, useEffect, useRef } from 'react';
 import { Container, Draggable } from 'react-smooth-dnd';
 import PropTypes from 'prop-types';
@@ -36,7 +36,8 @@ const BoardContent = (props) => {
 
         setColumns(newColumns);
         setBoard(newBoard);
-        const value = await UpdateOrder(board, newColumns);
+        const value = await UpdateOrder(board, newColumns)
+        // console.log(value)
         setBoards(value);
     }
 
@@ -90,7 +91,7 @@ const BoardContent = (props) => {
     })
 
     return(
-        <div className="board-columns">
+        <div className="scrollbar flex mr-gap gap-3 overflow-x-auto">
             <Container
                 orientation="horizontal"
                 onDrop={onColumnDrop}
@@ -120,19 +121,20 @@ const BoardContent = (props) => {
                 })}
 
                 {isShowAddList === false ? 
-                    <button className='add-new-column' onClick={() => setIsShowAddList(true)}>
+                    <button className='w-60 h-10 leading-8 py-1 pl-4 text-white ml-gap text-xs bg-hover-icon text-left hover:bg-hover-sidebar rounded-lg' onClick={() => setIsShowAddList(true)}>
                         <i className='bi-plus-lg icon'></i> Add another column
                     </button>
 
                     :
 
-                    <div className='content-add-column'>
+                    <div className='w-64 h-24 p-3 bg-list-bg-color/50 ml-2 rounded-md'>
                         <input 
                             name='title'
-                            type='text' 
+                            type='text'
+                            placeholder='Title column' 
                             ref={inputRef}
                             defaultValue={''}
-                            className='form-control' 
+                            className='py-1 px-2 w-full rounded-md focus:outline focus:outline-blue-500' 
                             onKeyDown={async (event) => {if(event.key === "Enter"){
                                 if(!event.target.value) {setIsShowAddList(false); return null} 
                                 
@@ -143,9 +145,9 @@ const BoardContent = (props) => {
                             }}}
                             spellCheck='false'
                         />
-                        <div className='group-btn'>
-                            <button type="submit" className='btn btn-success' onClick={() => handleCreateColumn()}>Add list</button>
-                            <button type='cancel' className='bi-x icon' onClick={() => setIsShowAddList(false)}></button>
+                        <div className='mt-3 flex items-center'>
+                            <button type="submit" className='py-1 px-2 bg-green-600 text-white font-medium rounded-md hover:text-black hover:bg-hover-sidebar' onClick={() => handleCreateColumn()}>Add list</button>
+                            <button type='cancel' className='ml-2 text-xl bi-x px-1 py-1 rounded-md hover:bg-hover-icon' onClick={() => setIsShowAddList(false)}></button>
                         </div>
                     </div>                
                 }

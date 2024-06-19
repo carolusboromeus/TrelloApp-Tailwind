@@ -62,6 +62,20 @@ const DropdownToggle = (props) => {
             document.removeEventListener('mousedown', handleOutsideClick);
         };
     }, []);
+
+    useEffect(() => {
+        if(show){
+            const draghandle = document.getElementsByClassName("smooth-dnd-container");
+            for (const drag of draghandle) {
+                drag.style.position = "static";
+            }
+        } else {
+            const draghandle = document.getElementsByClassName("smooth-dnd-container");
+            for (const drag of draghandle) {
+                drag.style.position = "relative";
+            }
+        }
+    }, [show])
     
     const toggleDropdown = () => {
         setShow(!show);
@@ -178,7 +192,7 @@ const SideBar = ((props) => {
     const {boards, setBoards, setIsVisible, isVisible, isSmallScreen} = props;
 
     return (
-        <div className="text-list-bg-color sm:h-[calc(100vh-37px)] border-r border-border-color">
+        <div className="sidebar text-list-bg-color sm:h-[calc(100vh-37px)] border-r border-border-color">
             <div id='sidebar-title' className='px-gap py-1 items-center text-base border-y border-border-color flex'>
                 <AnimatePresence>
                     {!isSmallScreen && (

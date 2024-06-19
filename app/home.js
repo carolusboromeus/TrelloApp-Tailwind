@@ -103,7 +103,7 @@ const Home = ({modal, children}) => {
 
   return (
     <>
-      <div className="h-dvh bg-board-bg-color text-app-main-color">
+      <div className="trello-master h-dvh bg-board-bg-color text-app-main-color">
         <VisibilityContext.Provider value={contextValue}>
           <div>{modal}</div>
         </VisibilityContext.Provider>

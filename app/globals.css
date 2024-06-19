@@ -27,6 +27,23 @@ body {
     }
   }
 
+  .scrollbar-card{
+    &::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 11px;
+    }
+    
+    &::-webkit-scrollbar:horizontal {
+      height: 11px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.24);
+      border-radius: 5px solid #ebecf0;
+      background-clip: padding-box;
+    }
+  }
+
   #sidebar-title {
     padding-bottom: 6px;
   }

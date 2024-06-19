@@ -87,7 +87,7 @@ const MemberBoard = ((props) => {
                     </div>
                 </div>
                 <div className="w-9/12 text-base font-medium">{member.name}</div>
-                <select className="w-3/12 p-1 rounded-sm focus:outline focus:outline-blue-400"
+                <select className="w-3/12 p-1 rounded-md focus:outline focus:outline-blue-400"
                     ref={selectMemberTypeRef}
                     onChange={(event) => handleChangeMemberType(event.target.value)}
                     value={memberType}

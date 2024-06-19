@@ -61,7 +61,8 @@ export const UpdateOrder = (async (board, newColumns) => {
 
     const newBoard = boards.map(b => (b._id === _board._id ? _board : b));
 
-    postData(newBoard, notificationSetting)
+    postData(newBoard, notificationSetting);
+    return newBoard;
 })
 
 export const UpdateVisibility = ( async (visibility, board) => {

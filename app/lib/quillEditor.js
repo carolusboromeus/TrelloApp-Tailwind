@@ -51,6 +51,26 @@ const Editor = forwardRef(
           };
         // eslint-disable-next-line
     }, [ref, onTextChange, placeholder, readOnly]);
+
+    useEffect(() => {
+      const toolbar = document.getElementsByClassName("ql-toolbar");
+      if(toolbar.length > 0){
+        toolbar[0].style.borderTopLeftRadius = "15px";
+        toolbar[0].style.borderTopRightRadius = "15px";
+      }
+
+      const editor = document.getElementsByClassName("ql-container");
+      if(editor.length > 0){
+        editor[0].style.borderBottomLeftRadius = "15px";
+        editor[0].style.borderBottomRightRadius = "15px";
+      }
+
+      const editorDisabled = document.getElementsByClassName("ql-disabled");
+      if(editorDisabled.length > 0){
+        editorDisabled[0].style.borderRadius = "15px";
+      }
+    }, [])
+
     return <div ref={containerRef}></div>
   },
 );

@@ -8,19 +8,15 @@ import { useVisibility } from '@/app/home';
 import ConfirmModal from '@/app/ui/Common/ConfirmModal';
 import { MODAL_ACTION_CLOSE, MODAL_ACTION_CONFIRM } from '@/app/utilities/constant';
 
-import './Column.scss';
+// import './Column.scss';
 import { useEffect, useRef, useState } from 'react';
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import { Container, Draggable } from 'react-smooth-dnd';
-import Dropdown from 'react-bootstrap/Dropdown';
-import Form from 'react-bootstrap/Form';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 
-const Column = (props) => {
-
-    const {column, onCardDrop, columns, board, params, setBoard, setColumns} = props;
-    const { isVisible, isSmallScreen, setBoards } = useVisibility();
-    const cards = mapOrder(column.cards, column.cardOrder, 'id');
+const DropdownMenu = (props) => {
+    const {column, setBoard, setBoards, setColumns} = props;
 
     const [showModalDelete, setShowModalDelete] = useState(false); //show modal delete
     const toggleModel = () => {
@@ -46,6 +42,55 @@ const Column = (props) => {
 
         toggleModel();
     }
+    return (
+        <div className="relative text-center">
+            <Menu>
+                <MenuButton className="inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold text-black shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-hover-button data-[open]:bg-hover-button data-[focus]:outline-1 data-[focus]:outline-white">
+                    ...
+                </MenuButton>
+                <Transition
+                    enter="transition ease-out duration-75"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                >
+                    <MenuItems
+                        anchor="bottom start"
+                        className="mt-1 w-52 origin-top-right rounded-xl border border-black/5 bg-list-bg-color p-1 text-sm/6 text-black [--anchor-gap:var(--spacing-1)] focus:outline-none"
+                    >
+                        <MenuItem>
+                            <button className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-black/10" onClick={toggleModel}>
+                                <div className='bi bi-trash mr-1'></div>
+                                Remove this column...
+                            </button>
+                        </MenuItem>
+                    </MenuItems>
+                </Transition>
+            </Menu>
+            <ConfirmModal
+                show={showModalDelete}
+                title={"Remove a column"}
+                content={`Are you sure to remove this column: <b>${column.title}</b>`}
+                onAction={onModalAction}
+            />
+        </div>
+    )
+}
+
+DropdownMenu.propTypes = {
+    column: PropTypes.object.isRequired,
+    setBoard: PropTypes.func.isRequired,
+    setBoards: PropTypes.func.isRequired,
+    setColumns: PropTypes.func.isRequired
+}
+
+const Column = (props) => {
+
+    const {column, onCardDrop, columns, board, params, setBoard, setColumns} = props;
+    const { isVisible, isSmallScreen, setBoards } = useVisibility();
+    const cards = mapOrder(column.cards, column.cardOrder, 'id');
 
     //Change Title List
     const [titleColumn, setTitleColumn] = useState('');
@@ -111,14 +156,13 @@ const Column = (props) => {
 
     return (
         <>
-            <motion.div className="column" animate={{maxHeight: isVisible ? null : isSmallScreen ? "calc(100vh - 200px)" : ''}}>
-                <header className="column-drag-handle">
-                    <div className='column-title'>
-                        <Form.Control 
-                            size={"sm"}
+            <motion.div className="w-80 ml-3 mt-1 sm:h-[calc(100vh-119px)] *:bg-list-bg-color *:text-black *:pr-2" animate={{maxHeight: isVisible ? null : isSmallScreen ? "calc(100vh - 200px)" : ''}}>
+                <header className="column-drag-handle flex pt-1 h-11 text-base font-bold rounded-t-md cursor-pointer">
+                    <div className='w-10/12'>
+                        <input 
                             type="text"
                             value={titleColumn}
-                            className='customize-input-column'
+                            className='mx-2 px-2 py-1 rounder-md cursor-pointer bg-inherit focus:outline-none focus:shadow'
                             onClick={selectAllText}
                             onChange={(event) => setTitleColumn(event.target.value)}
                             spellCheck="false"
@@ -127,21 +171,11 @@ const Column = (props) => {
                             ref={inputRef}
                         />
                     </div>
-                    <div className='column-dropdown'>
-                        <Dropdown>
-                            <Dropdown.Toggle variant="" id="dropdown-basic" size='sm'>
-                                
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                                {/* <Dropdown.Item href="#">Add card...</Dropdown.Item> */}
-                                <Dropdown.Item onClick={toggleModel}>Remove this column...</Dropdown.Item>
-                                {/* <Dropdown.Item href="#">Something else</Dropdown.Item> */}
-                            </Dropdown.Menu>
-                        </Dropdown>
+                    <div className='w-2/12'>
+                        <DropdownMenu column={column} setBoard={setBoard} setBoards={setBoards} setColumns={setColumns}/>
                     </div>
                 </header>
-                <div className="card-list">
+                <div className="scrollbar-card list-none m-0 max-h-[calc(100%-45px-36px)] overflow-y-auto">
                     <Container
                         // {...column.props}
 
@@ -178,10 +212,10 @@ const Column = (props) => {
                     </Container>
                     
                     {isShowAddNewCard === true && 
-                        <div className='add-new-card'>
+                        <div className='pb-2 pl-2 w-full'>
                             <textarea 
                                 rows='2'
-                                className='form-control'
+                                className='px-2 py-1 w-full rounded-md focus:outline focus:outline-blue-500'
                                 placeholder='Enter a title for this card...'
                                 ref={textAreaRef}
                                 onChange={() => {
@@ -196,31 +230,24 @@ const Column = (props) => {
                                 spellCheck='false'
                             >
                             </textarea>
-                            <div className='group-btn'>
+                            <div className='flext item-center my-1'>
                                 <button 
-                                    className='btn btn-primary'
+                                    className='px-2 py-2 font-bold rounded-md text-white bg-green-600 hover:text-black hover:bg-hover-button'
                                     onClick={() => handleAddNewCard()}
                                 >Add card</button>
-                                <button className='bi-x icon rounded' onClick={() => setIsShowAddNewCard(false)}></button>
+                                <button className='ml-2 bi-x icon rounded-md py-1 px-1 text-xl hover:bg-hover-button' onClick={() => setIsShowAddNewCard(false)}></button>
                             </div>
                         </div>
                     }
                 </div>
                 {isShowAddNewCard === false && 
-                    <footer>
-                        <button className='footer-action' onClick={() => setIsShowAddNewCard(true)}>
+                    <footer className='group/footer pl-4 pb-10 h-9 left-9 font-bold rounded-b-lg hover:bg-white cursor-pointer' onClick={() => setIsShowAddNewCard(true)}>
+                        <button className='pt-2 text-gray-500 group-hover/footer:text-black'>
                             <i className='bi-plus-lg icon'></i> Add a card
                         </button>
                     </footer>
                 }
             </motion.div>
-
-            <ConfirmModal
-                show={showModalDelete}
-                title={"Remove a column"}
-                content={`Are you sure to remove this column: <b>${column.title}</b>`}
-                onAction={onModalAction}
-            />
         </>
     )
 }

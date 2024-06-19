@@ -1,27 +1,27 @@
 'use client'
 
-import MemberDropdown from '@/app/ui/Common/MemberDropdown/MemberDropdown';
-import AttachmentFiles from '@/app/ui/content-card/AttachmentFiles/AttachmentFiles';
-import List from '@/app/ui/content-card/List/List';
-import Comment from '@/app/ui/content-card/Comment/Comment';
+// import MemberDropdown from '@/app/ui/Common/MemberDropdown/MemberDropdown';
+// import AttachmentFiles from '@/app/ui/content-card/AttachmentFiles/AttachmentFiles';
+// import List from '@/app/ui/content-card/List/List';
+// import Comment from '@/app/ui/content-card/Comment/Comment';
 import QuillEditor from '@/app/lib/quillEditor';
 import { CreateComment, CreateList, EditDescription, EditTitleCard, ShowCheckedlist} from '@/app/ui/buttons';
 import { getFirstLetters, fetchColumnData} from '@/app/utilities/function';
 import { UploadAttchmentFile } from '@/app/lib/action';
-import Loading from "@/app/ui/Common/Loading/Loading";
 
 import { CustomToolbar } from '@/app/lib/toolbar';
 import { getData, urlFile } from '@/app/lib/api';
-import { useRouter } from 'next/navigation'
-
-import './DetailCardModal.scss';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { useVisibility } from '@/app/home';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Dropdown from 'react-bootstrap/Dropdown';
+
+// import './DetailCardModal.scss';
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button, Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
+// import Modal from 'react-bootstrap/Modal';
+// import Form from 'react-bootstrap/Form';
+// import Row from 'react-bootstrap/Row';
+// import Col from 'react-bootstrap/Col';
+// import Dropdown from 'react-bootstrap/Dropdown';
 import imageCompression from 'browser-image-compression';
 import PropTypes from 'prop-types'
 const ObjectId = require('mongoose').Types.ObjectId;
@@ -454,324 +454,544 @@ const DetailCardModal = (props) => {
     if(card != null && params != null ){
 
         return (
-            <Modal show={true} onHide={() => router.push(`/b/${params.board_id}/${board.title.toLowerCase().replace(/ /g, "-")}`)} size="lg" centered>
-                <div id='modal'>
-                    <Modal.Header closeButton id='modal-header'>
-                        <div>
-                            <div className='group-btn'>
-                                <i className='bi-card-heading icon'></i>
-                                <Form.Control 
-                                    size={"sm"}
-                                    type="text"
-                                    value={titleCard}
-                                    className='customize-input-column'
-                                    onClick={selectAllText}
-                                    onChange={(event) => setTitleCard(event.target.value)}
-                                    spellCheck="false"
-                                    onBlur={handleClickOutside}
-                                    onMouseDown={(e) => e.preventDefault()}
-                                    ref={inputRef}
-                                />
-                            </div>
-                            <div id='list'>in list {column.title}</div>
-                        </div>
-                    </Modal.Header>
-                    <Modal.Body id='modal-body'>
-                        <Row>
-                            <Col xs={12} md={9}>
-                                <div id='members-notifications'>
-                                    {card && card.member.length > 0 && 
-                                        <>
-                                            <div id='label-members'>Members</div>
-                                            <div className='display-photo'>
-                                                {card.member && card.member.length > 0 && card.member.map((member, index) => {
-                                                    return (
-                                                        <div className="member-photo" title={member.name} key={member._id}>
-                                                            <div className="photo" style={{backgroundColor: board.background.hex}}>
-                                                                <div>
-                                                                    {getFirstLetters(member.name)}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })}
-                                                <div id='icon-add-member'>
-                                                    <Dropdown className='modal-dropdown' show={memberDropdownModal} onToggle={(isOpen) => setMemberDropdownModal(isOpen)}>
-                                                        <Dropdown.Toggle id='button-modal' size='sm'>
-                                                            <i className='bi bi-plus-lg'></i>
-                                                        </Dropdown.Toggle>
-                                                        <Dropdown.Menu className='modal-dropdown-body'>
-                                                            <Dropdown.Header className='modal-header'>Members<button className='bi bi-x' onClick={() => setMemberDropdownModal(false)}></button></Dropdown.Header>
-                                                            <MemberDropdown
-                                                                params={params}
-                                                                memberDropdown={memberDropdownModal}
-                                                                board={board}
-                                                                card={card}
-                                                                setBoardModal={setBoard}
-                                                                setCardModal={setCard}
-                                                            />
-                                                        </Dropdown.Menu>
-                                                    </Dropdown>
-                                                </div>
-                                            </div>
-                                        </>
-                                    }
-                                </div>
-                                <div className='group-btn'>
-                                    <i className='bi-justify-left icon'></i>
-                                    <h6>Description</h6>
-                                    {card.description.ops.length > 0 && 
-                                        <button className='btn badge btn-secondary btnDescription' onClick={() => {
-                                            setShowButtonDescription(true); 
-                                            setLastChange('')
-                                            setIsShowButtonComment(false);
-                                            quillRef.current.focus();
-                                        }}>Edit</button>
-                                    }
-                                </div>
-                                <div className='section'>
-                                    {showButtonDescription === false &&  
-                                        <div id='quill-description' onClick={() => {
-                                            if(quillRef.current.editor.delta.ops.length <= 1 ){
-                                                setShowButtonDescription(true); 
-                                                setLastChange('');
-                                                setIsShowButtonComment(false);
-                                            }
-                                        }}>
-                                            <QuillEditor 
-                                                ref={quillRef}
-                                                placeholder="Add a more detailed description..."
-                                                defaultValue={card.description}
-                                                modules={{
-                                                    toolbar: false,
-                                                }}
-                                                readOnly = {true}
-                                                onTextChange={setLastChange}
-                                            />
-                                        </div>
-                                    }
-                                    {showButtonDescription === true &&
-                                        <div id='edit-description-quill'>
-                                            <div className="text-editor">
-                                                <CustomToolbar
-                                                    toolbarId = {column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}
-                                                    handleUploadFile = {handleUploadFile}
-                                                />
-                                                <QuillEditor 
-                                                    modules={{
-                                                        toolbar: {
-                                                            container: `#${column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}`,
-                                                        },
-                                                    }}
-                                                    readOnly={false}
-                                                    ref={quillRef}
-                                                    placeholder="Add a more detailed description..."
-                                                    defaultValue={card.description}
-                                                    onTextChange={setLastChange}
-                                                />
-                                            </div>
-                                            <div className='group-btn'>
-                                                <button className='btn badge btn-primary' onClick={() => onUpdateDescription()}>Save</button>
-                                                <button className='btn badge btn-danger' onClick={() => {
-                                                    setShowButtonDescription(false);
-                                                    setValueTextArea("");
-                                                }}>Cancel</button>
-                                            </div>
-                                            {/* <div className="custom-file">
-                                                <label htmlFor='fileUpload' className='icon-fileUpload'><i className='bi-paperclip'></i></label>
-                                                <input type='file' id='fileUpload'></input>
-                                            </div> */}
-                                        </div>
-                                    }
-                                </div>
-
-                                {card.files && card.files.length > 0 && 
-                                    <div className='group-btn'>
-                                        <i className='fa fa-paperclip icon'></i>
-                                        <h6>Attachments</h6>
-                                    </div>
-                                }
-                                {card.files && card.files.length > 0 && 
-                                    card.files.map((file) => {
-                                    return (
-                                        <AttachmentFiles 
-                                            key={file._id}
-                                            file={file}
-                                            card={card}
-                                            fileComment={fileComment}
-                                            setIsShowButtonComment={setIsShowButtonComment}
-                                            params={params}
-                                            setBoard={setBoard}
-                                            setCard={setCard}
-                                        />
-                                    )
-                                })}
-
-                                <div id='checklist-title' className='group-btn'>
-                                    <i className='bi-check2-square icon'></i>
-                                    <h6>Checklist</h6>
-                                    {isShowChecked === false && 
-                                        <button className='btn badge btn-secondary btnHide' onClick={() => handleShowChecked()}>Hide checked items</button>
-                                    }
-                                    {isShowChecked === true &&
-                                        <button className='btn badge btn-secondary btnHide' onClick={() => handleShowChecked()}>Show checked items ({checked})</button>
-                                    }
-                                </div>
-                                <div className='group-btn' id='progress-bar'>
-                                    <div id="numberProgress">{progressBar}</div>
-                                    <div id="myProgress">
-                                        <div id="myBar"></div>
-                                    </div>
-                                </div>
-                                {card.checklist && card.checklist.length > 0 && isShowChecked === false && card.checklist.map((checklist) => {
-                                    return (
-                                        <List 
-                                            key={checklist._id}
-                                            checklist={checklist}
-                                            card={card}
-                                            board={board}
-                                            setProgressBar={setProgressBar}
-                                            setChecked={setChecked}
-                                            params={params}
-                                            setBoard={setBoard}
-                                            setCard={setCard}
-                                        />
-                                    )
-                                })}
-                                {card.checklist && card.checklist.length > 0 && isShowChecked === true && 
-                                    card.checklist.filter(checklist => checklist.check === false)
-                                    .map((checklist) => {
-                                    return (
-                                        <List 
-                                            key={checklist._id}
-                                            checklist={checklist}
-                                            card={card}
-                                            board={board}
-                                            setProgressBar={setProgressBar}
-                                            setChecked={setChecked}
-                                            params={params}
-                                            setBoard={setBoard}
-                                            setCard={setCard}
-                                        />
-                                    )
-                                })}
-                                <div className='section' id='section-checklist'>
-                                    {isShowAddNewChecklist === false &&
-                                        <button className='btn badge btn-secondary' onClick={() => setIsShowAddNewChecklist(true)}>Add an item</button>
-                                    }
-                                    {isShowAddNewChecklist === true &&
-                                        <div>
+            <Transition appear show={true}>
+                <Dialog as="div" className="relative z-10 focus:outline-none" onClose={() => router.push(`/b/${params.board_id}/${board.title.toLowerCase().replace(/ /g, "-")}`)}>
+                    <div className="fixed inset-0 z-10 w-screen overflow-y-auto bg-black/25">
+                        <div className="flex min-h-full items-center justify-center p-4">
+                        <TransitionChild
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 transform-[scale(95%)]"
+                            enterTo="opacity-100 transform-[scale(100%)]"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 transform-[scale(100%)]"
+                            leaveTo="opacity-0 transform-[scale(95%)]"
+                        >
+                            <DialogPanel className="w-full max-w-4xl rounded-xl bg-list-bg-color p-6 backdrop-blur-2xl">
+                                {/* Header Modal */}
+                                <div className='flex items-center'>
+                                    <DialogTitle as="h3" className="text-black w-full">
+                                        <div className='mb-1 text-xl font-medium'>
+                                            <i className='bi-card-heading mr-1 '></i>
                                             <input
-                                                className="form-control input-checklist"
-                                                ref={ChecklistRef}
-                                                defaultValue={''}
-                                                placeholder="Add an item"
-                                                onKeyDown={(event) => {if(event.key === "Enter"){
-                                                    if(!event.target.value) {setIsShowAddNewChecklist(false)} 
-                        
-                                                    handleAddNewChecklist(event.target.value);
-                                                }}}
-                                                spellCheck='false'
-                                            >
-                                            </input>
-                                            <div className='group-btn'>
-                                                <button className='btn badge btn-primary' onClick={() => {handleAddNewChecklist(ChecklistRef.current.value)}}>Add</button>
-                                                <button className='btn badge btn-danger' onClick={() => {
-                                                    setIsShowAddNewChecklist(false);
-                                                    ChecklistRef.current.value = '';
-                                                }}>Cancel</button>
-                                            </div>
+                                                type="text"
+                                                value={titleCard}
+                                                className='bg-inherit focus:shadow-md focus:outline-none px-2 py-1'
+                                                onClick={selectAllText}
+                                                onChange={(event) => setTitleCard(event.target.value)}
+                                                spellCheck="false"
+                                                onBlur={handleClickOutside}
+                                                onMouseDown={(e) => e.preventDefault()}
+                                                ref={inputRef}
+                                            />
                                         </div>
-                                    }
+                                        <div className='ml-9'>in list {column.title}</div>
+                                    </DialogTitle>
+                                    <button
+                                        onClick={() => router.push(`/b/${params.board_id}/${board.title.toLowerCase().replace(/ /g, "-")}`)}
+                                        title="Close modal"
+                                        className="p-2 hover:bg-hover-button hover:rounded-md"
+                                    >
+                                        <i className='bi bi-x-lg text-black text-xl'></i>
+                                    </button>
                                 </div>
-                                <div className='section'>
-                                    {isShowButtonComment === false &&
-                                        <div id='comment' className='form-control' 
-                                            onClick={() => {
-                                                setIsShowButtonComment(true); 
-                                                setValueTextArea('');
-                                                setShowButtonDescription(false);
-                                        }}>Write a comment...</div>
-                                    }
-                                    {isShowButtonComment === true &&
-                                        <div id='quill-comment-edit'>
-                                            <CustomToolbar
-                                                toolbarId = {card._id.toString().replace(/^[^a-zA-Z]+/g, '_')}
-                                            />
-                                            <QuillEditor
-                                                placeholder='Write a comment...'
-                                                modules={{
-                                                    toolbar: {
-                                                        container: `#${card._id.toString().replace(/^[^a-zA-Z]+/g, '_')}`,
-                                                    },
-                                                }}
-                                                ref={CommentRef}
-                                                readOnly={false}
-                                                onTextChange={setLastChange}
-                                            />
-                                            <div className='group-btn'>
-                                                <button className='btn badge btn-primary' onClick={() => handleAddNewComment()}>Save</button>
-                                                <button className='btn badge btn-danger' onClick={() => {
+
+                                {/* Body Modal */}
+                                <div className='grid grid-cols-7 mt-5'>
+                                    <div className='col-span-6 pr-5'>
+
+                                        {/* Description */}
+                                        <div className='flex items-center mb-3 text-base'>
+                                            <i className='bi-justify-left mr-2'></i>
+                                            <h6 className=' font-medium'>Description</h6>
+                                            {card.description.ops.length > 0 && 
+                                                <button className='btn badge btn-secondary btnDescription' onClick={() => {
+                                                    setShowButtonDescription(true); 
+                                                    setLastChange('')
                                                     setIsShowButtonComment(false);
-                                                    setLastChange("");
-                                                }}>Cancel</button>
+                                                    quillRef.current.focus();
+                                                }}>Edit</button>
+                                            }
+                                        </div>
+                                        <div className='ml-6'>
+                                            {showButtonDescription === false &&  
+                                                <div id='quill-description' className='bg-white rounded-2xl' onClick={() => {
+                                                    if(quillRef.current.editor.delta.ops.length <= 1 ){
+                                                        setShowButtonDescription(true); 
+                                                        setLastChange('');
+                                                        setIsShowButtonComment(false);
+                                                    }
+                                                }}>
+                                                    <QuillEditor 
+                                                        ref={quillRef}
+                                                        placeholder="Add a more detailed description..."
+                                                        defaultValue={card.description}
+                                                        modules={{
+                                                            toolbar: false,
+                                                        }}
+                                                        readOnly = {true}
+                                                        onTextChange={setLastChange}
+                                                    />
+                                                </div>
+                                            }
+                                            {showButtonDescription === true &&
+                                                <div id='edit-description-quill'>
+                                                    <div className="text-editor bg-white rounded-2xl">
+                                                        <CustomToolbar
+                                                            toolbarId = {column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}
+                                                            handleUploadFile = {handleUploadFile}
+                                                        />
+                                                        <QuillEditor 
+                                                            modules={{
+                                                                toolbar: {
+                                                                    container: `#${column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}`,
+                                                                },
+                                                            }}
+                                                            readOnly={false}
+                                                            ref={quillRef}
+                                                            placeholder="Add a more detailed description..."
+                                                            defaultValue={card.description}
+                                                            onTextChange={setLastChange}
+                                                        />
+                                                    </div>
+                                                    <div className='flex mt-2'>
+                                                        <button className='px-2 py-1 font-bold rounded-md bg-blue-600 text-white hover:bg-hover-button hover:text-black' onClick={() => onUpdateDescription()}>Save</button>
+                                                        <button className='ml-2 px-2 py-1 font-bold rounded-md bg-red-600 text-white hover:bg-hover-button hover:text-black' onClick={() => {
+                                                            setShowButtonDescription(false);
+                                                            setValueTextArea("");
+                                                        }}>Cancel</button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        {/* Attachmen File */}
+                                        {card.files && card.files.length > 0 && 
+                                            <div className='flex items-center mt-3 mb-3 text-base'>
+                                                <i className='fa fa-paperclip mr-2'></i>
+                                                <h6 className='font-medium'>Attachments</h6>
+                                            </div>
+                                        }
+                                        {/* {card.files && card.files.length > 0 && 
+                                            card.files.map((file) => {
+                                            return (
+                                                <AttachmentFiles 
+                                                    key={file._id}
+                                                    file={file}
+                                                    card={card}
+                                                    fileComment={fileComment}
+                                                    setIsShowButtonComment={setIsShowButtonComment}
+                                                    params={params}
+                                                    setBoard={setBoard}
+                                                    setCard={setCard}
+                                                />
+                                            )
+                                        })} */}
+
+                                        {/* Checklist */}
+                                        <div id='checklist-title' className='flex items-center mt-3 mb-3 text-base'>
+                                            <i className='bi-check2-square mr-3'></i>
+                                            <h6 className='font-medium'>Checklist</h6>
+                                            {isShowChecked === false && 
+                                                <button className='ml-2 px-1 py-1 text-xs font-medium rounded-md bg-slate-500 text-white hover:bg-hover-button hover:text-black btnHide' onClick={() => handleShowChecked()}>Hide checked items</button>
+                                            }
+                                            {isShowChecked === true &&
+                                                <button className='ml-2 px-1 py-1 text-xs font-medium rounded-md bg-slate-500 text-white hover:bg-hover-button hover:text-black btnHide' onClick={() => handleShowChecked()}>Show checked items ({checked})</button>
+                                            }
+                                        </div>
+                                        <div className='flex items-center mt-3 mb-3' id='progress-bar'>
+                                            <div id="numberProgress" className='mr-2'>{progressBar}</div>
+                                            <div id="myProgress" className='m-auto w-full bg-white/70 rounded-3xl h-3'>
+                                                <div id="myBar" className='w-0 h-3 rounded-3xl bg-navbar-board-bg-color'></div>
                                             </div>
                                         </div>
-                                    }
+                                        {/* {card.checklist && card.checklist.length > 0 && isShowChecked === false && card.checklist.map((checklist) => {
+                                            return (
+                                                <List 
+                                                    key={checklist._id}
+                                                    checklist={checklist}
+                                                    card={card}
+                                                    board={board}
+                                                    setProgressBar={setProgressBar}
+                                                    setChecked={setChecked}
+                                                    params={params}
+                                                    setBoard={setBoard}
+                                                    setCard={setCard}
+                                                />
+                                            )
+                                        })} */}
+                                        {/* {card.checklist && card.checklist.length > 0 && isShowChecked === true && 
+                                            card.checklist.filter(checklist => checklist.check === false)
+                                            .map((checklist) => {
+                                            return (
+                                                <List 
+                                                    key={checklist._id}
+                                                    checklist={checklist}
+                                                    card={card}
+                                                    board={board}
+                                                    setProgressBar={setProgressBar}
+                                                    setChecked={setChecked}
+                                                    params={params}
+                                                    setBoard={setBoard}
+                                                    setCard={setCard}
+                                                />
+                                            )
+                                        })} */}
+                                        <div className='ml-8 mt-2' id='section-checklist'>
+                                            {isShowAddNewChecklist === false &&
+                                                <button className='px-2 py-1 rounded-md font-medium bg-blue-600 text-white hover:bg-hover-button hover:text-black' onClick={() => setIsShowAddNewChecklist(true)}>Add an item</button>
+                                            }
+                                            {isShowAddNewChecklist === true &&
+                                                <div>
+                                                    <input
+                                                        className="input-checklist px-2 py-1 rounded-md focus:outline-blue-400 focus:outline"
+                                                        ref={ChecklistRef}
+                                                        defaultValue={''}
+                                                        placeholder="Add an item"
+                                                        onKeyDown={(event) => {if(event.key === "Enter"){
+                                                            if(!event.target.value) {setIsShowAddNewChecklist(false)} 
+                                
+                                                            handleAddNewChecklist(event.target.value);
+                                                        }}}
+                                                        spellCheck='false'
+                                                    >
+                                                    </input>
+                                                    <div className='flex mt-2'>
+                                                        <button className='px-2 py-1 rounded-md font-medium text-white bg-blue-600 hover:text-black hover:bg-hover-button' onClick={() => {handleAddNewChecklist(ChecklistRef.current.value)}}>Add</button>
+                                                        <button className='ml-2 px-2 py-1 rounded-md font-medium text-white bg-red-600 hover:text-black hover:bg-hover-button' onClick={() => {
+                                                            setIsShowAddNewChecklist(false);
+                                                            ChecklistRef.current.value = '';
+                                                        }}>Cancel</button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className='col-span-1'>Test 123</div>
                                 </div>
-                                {card.comments && card.comments.length > 0 && card.comments.map((comment) => {
-                                    return (
-                                        <Comment
-                                            key={comment._id} 
-                                            comment={comment}
-                                            setDataFromChild={setDataFromChild}
-                                            handleChangeSubmitUploadFile={handleChangeSubmitUploadFile}
-                                            params={params}
-                                            setBoard={setBoard}
-                                            setCard={setCard}
-                                        />
-                                    )
-                                })}
-                            </Col>
-                            <Col xs={6} md={3}>
-                                <Dropdown className='modal-dropdown' show={memberDropdown} onToggle={(isOpen) => setMemberDropdown(isOpen)}>
-                                    <Dropdown.Toggle className='modal-dropdown-button' size='sm'>
-                                        <div className='badge icon-group'><i className='bi-person icon'></i>Member</div>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu className='modal-dropdown-body'>
-                                        <Dropdown.Header className='modal-header'>Members<button className='bi bi-x' onClick={() => setMemberDropdown(false)}></button></Dropdown.Header>
-                                        <MemberDropdown
-                                            params={params}
-                                            memberDropdown={memberDropdown}
-                                            board={board}
-                                            card={card}
-                                            setBoardModal={setBoard}
-                                            setCardModal={setCard}
-                                        />
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                                <Dropdown className='modal-dropdown' show={fileDropdown} onToggle={(isOpen) => setFileDropdown(isOpen)}>
-                                    <Dropdown.Toggle className='modal-dropdown-button' size='sm'>
-                                        <div className='badge icon-group'><i className='fa fa-paperclip icon'></i>Attachment</div>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu className='modal-dropdown-body'>
-                                        <Dropdown.Header className='modal-header'>Attach a file from your computer<button className='bi bi-x' onClick={() => setFileDropdown(false)}></button></Dropdown.Header>
-                                        <input type="file" className='form-control input-form' 
-                                            onChange={handleChangeUploadFile}
-                                            ref={fileRef}
-                                            encType="multipart/form-data"
-                                        />
-                                        <button type="submit" className='btn btn-primary badge'onClick={handleUploadFile}>Insert</button>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </Col>
-                        </Row>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <input type='file' id='fileUpload' style={{display: "none"}} onChange={handleChangeSubmitUploadFile} ref={fileSubmitRef} encType="multipart/form-data"></input>
-                    </Modal.Footer>   
-                </div>
-            </Modal>
+                            </DialogPanel>
+                        </TransitionChild>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
+            // <Modal show={true} onHide={() => router.push(`/b/${params.board_id}/${board.title.toLowerCase().replace(/ /g, "-")}`)} size="lg" centered>
+            //     <div id='modal'>
+            //         <Modal.Header closeButton id='modal-header'>
+            //             <div>
+            //                 <div className='group-btn'>
+            //                     <i className='bi-card-heading icon'></i>
+            //                     <Form.Control 
+            //                         size={"sm"}
+            //                         type="text"
+            //                         value={titleCard}
+            //                         className='customize-input-column'
+            //                         onClick={selectAllText}
+            //                         onChange={(event) => setTitleCard(event.target.value)}
+            //                         spellCheck="false"
+            //                         onBlur={handleClickOutside}
+            //                         onMouseDown={(e) => e.preventDefault()}
+            //                         ref={inputRef}
+            //                     />
+            //                 </div>
+            //                 <div id='list'>in list {column.title}</div>
+            //             </div>
+            //         </Modal.Header>
+            //         <Modal.Body id='modal-body'>
+            //             <Row>
+            //                 <Col xs={12} md={9}>
+            //                     <div id='members-notifications'>
+            //                         {/* {card && card.member.length > 0 && 
+            //                             <>
+            //                                 <div id='label-members'>Members</div>
+            //                                 <div className='display-photo'>
+            //                                     {card.member && card.member.length > 0 && card.member.map((member, index) => {
+            //                                         return (
+            //                                             <div className="member-photo" title={member.name} key={member._id}>
+            //                                                 <div className="photo" style={{backgroundColor: board.background.hex}}>
+            //                                                     <div>
+            //                                                         {getFirstLetters(member.name)}
+            //                                                     </div>
+            //                                                 </div>
+            //                                             </div>
+            //                                         )
+            //                                     })}
+            //                                     <div id='icon-add-member'>
+            //                                         <Dropdown className='modal-dropdown' show={memberDropdownModal} onToggle={(isOpen) => setMemberDropdownModal(isOpen)}>
+            //                                             <Dropdown.Toggle id='button-modal' size='sm'>
+            //                                                 <i className='bi bi-plus-lg'></i>
+            //                                             </Dropdown.Toggle>
+            //                                             <Dropdown.Menu className='modal-dropdown-body'>
+            //                                                 <Dropdown.Header className='modal-header'>Members<button className='bi bi-x' onClick={() => setMemberDropdownModal(false)}></button></Dropdown.Header>
+            //                                                 <MemberDropdown
+            //                                                     params={params}
+            //                                                     memberDropdown={memberDropdownModal}
+            //                                                     board={board}
+            //                                                     card={card}
+            //                                                     setBoardModal={setBoard}
+            //                                                     setCardModal={setCard}
+            //                                                 />
+            //                                             </Dropdown.Menu>
+            //                                         </Dropdown>
+            //                                     </div>
+            //                                 </div>
+            //                             </>
+            //                         } */}
+            //                     </div>
+            //                     <div className='group-btn'>
+            //                         <i className='bi-justify-left icon'></i>
+            //                         <h6>Description</h6>
+            //                         {card.description.ops.length > 0 && 
+            //                             <button className='btn badge btn-secondary btnDescription' onClick={() => {
+            //                                 setShowButtonDescription(true); 
+            //                                 setLastChange('')
+            //                                 setIsShowButtonComment(false);
+            //                                 quillRef.current.focus();
+            //                             }}>Edit</button>
+            //                         }
+            //                     </div>
+            //                     <div className='section'>
+            //                         {showButtonDescription === false &&  
+            //                             <div id='quill-description' onClick={() => {
+            //                                 if(quillRef.current.editor.delta.ops.length <= 1 ){
+            //                                     setShowButtonDescription(true); 
+            //                                     setLastChange('');
+            //                                     setIsShowButtonComment(false);
+            //                                 }
+            //                             }}>
+            //                                 <QuillEditor 
+            //                                     ref={quillRef}
+            //                                     placeholder="Add a more detailed description..."
+            //                                     defaultValue={card.description}
+            //                                     modules={{
+            //                                         toolbar: false,
+            //                                     }}
+            //                                     readOnly = {true}
+            //                                     onTextChange={setLastChange}
+            //                                 />
+            //                             </div>
+            //                         }
+            //                         {showButtonDescription === true &&
+            //                             <div id='edit-description-quill'>
+            //                                 <div className="text-editor">
+            //                                     <CustomToolbar
+            //                                         toolbarId = {column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}
+            //                                         handleUploadFile = {handleUploadFile}
+            //                                     />
+            //                                     <QuillEditor 
+            //                                         modules={{
+            //                                             toolbar: {
+            //                                                 container: `#${column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}`,
+            //                                             },
+            //                                         }}
+            //                                         readOnly={false}
+            //                                         ref={quillRef}
+            //                                         placeholder="Add a more detailed description..."
+            //                                         defaultValue={card.description}
+            //                                         onTextChange={setLastChange}
+            //                                     />
+            //                                 </div>
+            //                                 <div className='group-btn'>
+            //                                     <button className='btn badge btn-primary' onClick={() => onUpdateDescription()}>Save</button>
+            //                                     <button className='btn badge btn-danger' onClick={() => {
+            //                                         setShowButtonDescription(false);
+            //                                         setValueTextArea("");
+            //                                     }}>Cancel</button>
+            //                                 </div>
+            //                                 {/* <div className="custom-file">
+            //                                     <label htmlFor='fileUpload' className='icon-fileUpload'><i className='bi-paperclip'></i></label>
+            //                                     <input type='file' id='fileUpload'></input>
+            //                                 </div> */}
+            //                             </div>
+            //                         }
+            //                     </div>
+
+            //                     {card.files && card.files.length > 0 && 
+            //                         <div className='group-btn'>
+            //                             <i className='fa fa-paperclip icon'></i>
+            //                             <h6>Attachments</h6>
+            //                         </div>
+            //                     }
+            //                     {/* {card.files && card.files.length > 0 && 
+            //                         card.files.map((file) => {
+            //                         return (
+            //                             <AttachmentFiles 
+            //                                 key={file._id}
+            //                                 file={file}
+            //                                 card={card}
+            //                                 fileComment={fileComment}
+            //                                 setIsShowButtonComment={setIsShowButtonComment}
+            //                                 params={params}
+            //                                 setBoard={setBoard}
+            //                                 setCard={setCard}
+            //                             />
+            //                         )
+            //                     })} */}
+
+            //                     <div id='checklist-title' className='group-btn'>
+            //                         <i className='bi-check2-square icon'></i>
+            //                         <h6>Checklist</h6>
+            //                         {isShowChecked === false && 
+            //                             <button className='btn badge btn-secondary btnHide' onClick={() => handleShowChecked()}>Hide checked items</button>
+            //                         }
+            //                         {isShowChecked === true &&
+            //                             <button className='btn badge btn-secondary btnHide' onClick={() => handleShowChecked()}>Show checked items ({checked})</button>
+            //                         }
+            //                     </div>
+            //                     <div className='group-btn' id='progress-bar'>
+            //                         <div id="numberProgress">{progressBar}</div>
+            //                         <div id="myProgress">
+            //                             <div id="myBar"></div>
+            //                         </div>
+            //                     </div>
+            //                     {/* {card.checklist && card.checklist.length > 0 && isShowChecked === false && card.checklist.map((checklist) => {
+            //                         return (
+            //                             <List 
+            //                                 key={checklist._id}
+            //                                 checklist={checklist}
+            //                                 card={card}
+            //                                 board={board}
+            //                                 setProgressBar={setProgressBar}
+            //                                 setChecked={setChecked}
+            //                                 params={params}
+            //                                 setBoard={setBoard}
+            //                                 setCard={setCard}
+            //                             />
+            //                         )
+            //                     })} */}
+            //                     {/* {card.checklist && card.checklist.length > 0 && isShowChecked === true && 
+            //                         card.checklist.filter(checklist => checklist.check === false)
+            //                         .map((checklist) => {
+            //                         return (
+            //                             <List 
+            //                                 key={checklist._id}
+            //                                 checklist={checklist}
+            //                                 card={card}
+            //                                 board={board}
+            //                                 setProgressBar={setProgressBar}
+            //                                 setChecked={setChecked}
+            //                                 params={params}
+            //                                 setBoard={setBoard}
+            //                                 setCard={setCard}
+            //                             />
+            //                         )
+            //                     })} */}
+            //                     <div className='section' id='section-checklist'>
+            //                         {isShowAddNewChecklist === false &&
+            //                             <button className='btn badge btn-secondary' onClick={() => setIsShowAddNewChecklist(true)}>Add an item</button>
+            //                         }
+            //                         {isShowAddNewChecklist === true &&
+            //                             <div>
+            //                                 <input
+            //                                     className="form-control input-checklist"
+            //                                     ref={ChecklistRef}
+            //                                     defaultValue={''}
+            //                                     placeholder="Add an item"
+            //                                     onKeyDown={(event) => {if(event.key === "Enter"){
+            //                                         if(!event.target.value) {setIsShowAddNewChecklist(false)} 
+                        
+            //                                         handleAddNewChecklist(event.target.value);
+            //                                     }}}
+            //                                     spellCheck='false'
+            //                                 >
+            //                                 </input>
+            //                                 <div className='group-btn'>
+            //                                     <button className='btn badge btn-primary' onClick={() => {handleAddNewChecklist(ChecklistRef.current.value)}}>Add</button>
+            //                                     <button className='btn badge btn-danger' onClick={() => {
+            //                                         setIsShowAddNewChecklist(false);
+            //                                         ChecklistRef.current.value = '';
+            //                                     }}>Cancel</button>
+            //                                 </div>
+            //                             </div>
+            //                         }
+            //                     </div>
+            //                     <div className='section'>
+            //                         {isShowButtonComment === false &&
+            //                             <div id='comment' className='form-control' 
+            //                                 onClick={() => {
+            //                                     setIsShowButtonComment(true); 
+            //                                     setValueTextArea('');
+            //                                     setShowButtonDescription(false);
+            //                             }}>Write a comment...</div>
+            //                         }
+            //                         {isShowButtonComment === true &&
+            //                             <div id='quill-comment-edit'>
+            //                                 <CustomToolbar
+            //                                     toolbarId = {card._id.toString().replace(/^[^a-zA-Z]+/g, '_')}
+            //                                 />
+            //                                 <QuillEditor
+            //                                     placeholder='Write a comment...'
+            //                                     modules={{
+            //                                         toolbar: {
+            //                                             container: `#${card._id.toString().replace(/^[^a-zA-Z]+/g, '_')}`,
+            //                                         },
+            //                                     }}
+            //                                     ref={CommentRef}
+            //                                     readOnly={false}
+            //                                     onTextChange={setLastChange}
+            //                                 />
+            //                                 <div className='group-btn'>
+            //                                     <button className='btn badge btn-primary' onClick={() => handleAddNewComment()}>Save</button>
+            //                                     <button className='btn badge btn-danger' onClick={() => {
+            //                                         setIsShowButtonComment(false);
+            //                                         setLastChange("");
+            //                                     }}>Cancel</button>
+            //                                 </div>
+            //                             </div>
+            //                         }
+            //                     </div>
+            //                     {/* {card.comments && card.comments.length > 0 && card.comments.map((comment) => {
+            //                         return (
+            //                             <Comment
+            //                                 key={comment._id} 
+            //                                 comment={comment}
+            //                                 setDataFromChild={setDataFromChild}
+            //                                 handleChangeSubmitUploadFile={handleChangeSubmitUploadFile}
+            //                                 params={params}
+            //                                 setBoard={setBoard}
+            //                                 setCard={setCard}
+            //                             />
+            //                         )
+            //                     })} */}
+            //                 </Col>
+            //                 <Col xs={6} md={3}>
+            //                     <Dropdown className='modal-dropdown' show={memberDropdown} onToggle={(isOpen) => setMemberDropdown(isOpen)}>
+            //                         <Dropdown.Toggle className='modal-dropdown-button' size='sm'>
+            //                             <div className='badge icon-group'><i className='bi-person icon'></i>Member</div>
+            //                         </Dropdown.Toggle>
+            //                         <Dropdown.Menu className='modal-dropdown-body'>
+            //                             <Dropdown.Header className='modal-header'>Members<button className='bi bi-x' onClick={() => setMemberDropdown(false)}></button></Dropdown.Header>
+            //                             <MemberDropdown
+            //                                 params={params}
+            //                                 memberDropdown={memberDropdown}
+            //                                 board={board}
+            //                                 card={card}
+            //                                 setBoardModal={setBoard}
+            //                                 setCardModal={setCard}
+            //                             />
+            //                         </Dropdown.Menu>
+            //                     </Dropdown>
+            //                     <Dropdown className='modal-dropdown' show={fileDropdown} onToggle={(isOpen) => setFileDropdown(isOpen)}>
+            //                         <Dropdown.Toggle className='modal-dropdown-button' size='sm'>
+            //                             <div className='badge icon-group'><i className='fa fa-paperclip icon'></i>Attachment</div>
+            //                         </Dropdown.Toggle>
+            //                         <Dropdown.Menu className='modal-dropdown-body'>
+            //                             <Dropdown.Header className='modal-header'>Attach a file from your computer<button className='bi bi-x' onClick={() => setFileDropdown(false)}></button></Dropdown.Header>
+            //                             <input type="file" className='form-control input-form' 
+            //                                 onChange={handleChangeUploadFile}
+            //                                 ref={fileRef}
+            //                                 encType="multipart/form-data"
+            //                             />
+            //                             <button type="submit" className='btn btn-primary badge'onClick={handleUploadFile}>Insert</button>
+            //                         </Dropdown.Menu>
+            //                     </Dropdown>
+            //                 </Col>
+            //             </Row>
+            //         </Modal.Body>
+            //         <Modal.Footer>
+            //             <input type='file' id='fileUpload' style={{display: "none"}} onChange={handleChangeSubmitUploadFile} ref={fileSubmitRef} encType="multipart/form-data"></input>
+            //         </Modal.Footer>   
+            //     </div>
+            // </Modal>
         );
     }
 }
