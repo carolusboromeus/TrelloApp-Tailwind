@@ -1,6 +1,49 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Documenter Api
+https://documenter.getpostman.com/view/33351084/2sA3Qs9BmJ
 
-## Getting Started
+## Tools
+Node version 20.11.1.\
+Next verison 14.2.3.\
+React version 18.2.0.
+
+## All dependencies on FrontEnd Folder
+"axios": "^1.6.8",\
+"bootstrap": "^5.3.3",\
+"bootstrap-icons": "^1.11.3",\
+"browser-image-compression": "^2.0.2",\
+"dateformat": "^5.0.3",\
+"font-awesome": "^4.7.0",\
+"framer-motion": "^11.2.2",\
+"html-react-parser": "^5.1.10",\
+"javascript-time-ago": "^2.5.10",\
+"lodash": "^4.17.21",\
+"mongoose": "^8.3.4",\
+"next": "14.2.3",\
+"quill": "^2.0.0",\
+"react": "^18",\
+"react-bootstrap": "^2.10.2",\
+"react-bootstrap-typeahead": "^6.3.2",\
+"react-color": "^2.19.3",\
+"react-datepicker": "^6.8.0",\
+"react-dom": "^18",\
+"react-scripts": "5.0.1",\
+"react-smooth-dnd": "^0.11.1",\
+"react-time-ago": "^7.3.1",\
+"sass": "^1.75.0"
+
+## All dependencies on BackEnd Folder
+"axios": "^1.6.8",\
+"cors": "^2.8.5",\
+"dotenv": "^16.4.5",\
+"express": "^4.19.2",\
+"mongoose": "^8.4.0",\
+"multer": "^1.4.5-lts.1",\
+"node-cron": "^3.0.3",\
+"nodemon": "^3.1.0"
+
+## Available Scripts on FrontEnd Folder
+
+In the project directory, you can run:
 
 First, run the development server:
 
@@ -14,23 +57,13 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then Open http://localhost:3000 to view it in your browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Available Scripts on BackEnd Folder
+### `node index.js` or `nodemon`
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Runs the app in the development mode.\
+Open [http://localhost:8080](http://localhost:8080) to view it in your browser.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
