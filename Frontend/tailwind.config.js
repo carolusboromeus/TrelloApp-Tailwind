@@ -34,6 +34,9 @@ module.exports = {
         'hover-icon': '#ffffff1a',
         'hover-button': '#bdbdbd9d',
       },
+      width: {
+        '100' : '535px'
+      }
     },
   },
   plugins: [],

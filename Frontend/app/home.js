@@ -109,7 +109,7 @@ const Home = ({modal, children}) => {
         </VisibilityContext.Provider>
         <AppBar notification={notification} setNotification={setNotification} setBoards={setBoards}/>
         <div className=" h-max sm:flex w-full">
-          <motion.div className="w-full sm:w-2/12" animate={{width: isVisible ? null : isSmallScreen ? null : '3.5%', height: isVisible ? isSmallScreen ? "" : '' : isSmallScreen ? "33px" : null}}>
+          <motion.div className="w-full sm:w-1/5 md:w-2/12" animate={{width: isVisible ? null : isSmallScreen ? null : '6.5%', height: isVisible ? isSmallScreen ? "" : '' : isSmallScreen ? "33px" : null}}>
             <SideBar 
               boards={boards}
               setBoards={setBoards}
@@ -119,15 +119,15 @@ const Home = ({modal, children}) => {
               isSmallScreen={isSmallScreen}/>
           </motion.div>
           <VisibilityContext.Provider value={contextValue}>
-            <motion.div className="w-full sm:w-10/12" animate={{width: isVisible ? null : isSmallScreen ? null : '96.5%'}}>
+            <motion.div className="w-full sm:w-4/5 md:w-10/12" animate={{width: isVisible ? null : isSmallScreen ? null : '93.5%'}}>
                 {children}
                 {loading && <Loading/>}
             </motion.div>
           </VisibilityContext.Provider>
         </div>
       </div>
-      {!first &&
-        <div className="md:absolute bottom-0 -translate-x-notification">
+      {!first && !isOnline &&
+        <div className="absolute w-full sm:w-auto sm:mb-5 sm:ml-5 bottom-0 -translate-x-notification">
           <motion.div animate={{x: isOnline ? 0 : 600}} transition={{ duration: 0.1, delay: 0.5, }} >
             <div className="bg-list-bg-color p-5 rounded-lg flex flex-row">
               <i className="bi bi-exclamation-triangle-fill mr-2 text-yellow-500"></i>
@@ -139,8 +139,8 @@ const Home = ({modal, children}) => {
           </motion.div>
         </div>
       }
-      {first &&
-        <div className="md:absolute bottom-0 -translate-x-notification">
+      {first && !isOnline &&
+        <div className="absolute w-full sm:w-auto sm:mb-5 sm:ml-5 bottom-0 -translate-x-notification">
           <motion.div animate={{x: isOnline ? 0 : 600}} transition={{ duration: 0.1, delay: 0.5, }} >
             <div className="bg-list-bg-color p-5 rounded-lg flex flex-row">
               <i className="bi bi-exclamation-triangle-fill mr-2 text-yellow-500"></i>

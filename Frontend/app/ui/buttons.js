@@ -94,8 +94,21 @@ export const AddNewMember = ( async (valueMember, board) => {
     return {newBoard, boardsR};
 })
 
-export const UpdateMember = ((newMember, board) => {
+export const UpdateMember = ( async (newMember, board) => {
     const memberIdUpdate = newMember._id;
+    
+    for (const column of board.columns) {
+        for (const card of column.cards){
+            for (const list of card.checklist) {
+                if(list.member === memberIdUpdate){
+                    list.member = null;
+                }
+                
+            }
+            card.member = card.member.filter(memberCard => memberCard.memberId !== memberIdUpdate);
+        }
+    }
+
     let nMembers = [...board.member];
     let index = nMembers.findIndex(item => item._id === memberIdUpdate);
 
@@ -107,11 +120,11 @@ export const UpdateMember = ((newMember, board) => {
 
     // console.log(nMembers);
 
-    let nBoards = board;
-    nBoards.member = nMembers;
+    let newBoard = board;
+    newBoard.member = nMembers;
     
-    UpdateBoard(nBoards);
-    return nBoards;
+    const boardsR = await UpdateBoard(newBoard);
+    return {boardsR, newBoard};
 })
 
 export const CreateColumn = (async (board, columns, title) => {
@@ -376,7 +389,7 @@ export const ValueChecklist = ((params, checklist, value) => {
 export const AssignMemberList = ((params, member, checklist) => {
     const newMember = {
         _id: new ObjectId().toString(),
-        memberId: member._id,
+        memberId: member.memberId,
         name: member.name,
         type: member.type
     }

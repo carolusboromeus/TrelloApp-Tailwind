@@ -58,7 +58,7 @@ const DropdownToggle = (props) => {
     }, [show])
     
     return (
-        <div className="relative sm:flex text-list-bg-color" ref={dropdownRef}>
+        <div className={`${show === true ? "relative" : "static"} sm:flex text-list-bg-color`} ref={dropdownRef}>
             {/* Dropdown toggle button */}
             <button className="p-1 hover:bg-hover-icon hover:rounded-md" onClick={() => setShow(true)}>
                 {board.visibility === "Private" &&
@@ -71,7 +71,7 @@ const DropdownToggle = (props) => {
 
             {/* Dropdown menu */}
             {show && (
-                <div className="absolute left-0 mt-7 w-72 bg-list-bg-color border rounded-md shadow-lg px-2">
+                <div className="absolute left-0 top-0 mt-8 w-72 bg-list-bg-color border rounded-md shadow-lg px-2">
                     <div className='flex w-full px-3 py-3 text-sm'>
                         <div className='text-black font-semibold w-full text-center'>Change visibility</div>
                         <button className='text-end w-1/12' onClick={() => setShow(false)}>

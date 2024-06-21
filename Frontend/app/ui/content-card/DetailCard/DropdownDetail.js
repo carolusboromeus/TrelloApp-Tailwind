@@ -25,7 +25,7 @@ export const MemberDropdownToggle = (props) => {
     }, []);
 
     useEffect(() => {
-        if(show){
+        if(show && code !== "member-dropdown"){
             const container = document.getElementsByClassName("ql-container");
             for (const element of container) {
                 element.style.position = "static";
@@ -36,7 +36,7 @@ export const MemberDropdownToggle = (props) => {
                 element.style.position = "relative";
             }
         }
-    }, [show])
+    }, [show, code])
 
     const toggleDropdown = () => {
         setShow(!show);

@@ -77,15 +77,12 @@ const Home = ({params}) => {
         return <Loading/>
     }
 
-    if(board){
-        return (
-            <>
-                <BoardBar params={params} board={board} setBoard={setBoard}/>
-                <BoardContent params={params} board={board} columns={columns} setBoard={setBoard} setColumns={setColumns}/>
-            </>
-        )
-    }
-    
+    return (
+        <>
+            <BoardBar params={params} board={board} setBoard={setBoard}/>
+            <BoardContent params={params} board={board} columns={columns} setBoard={setBoard} setColumns={setColumns}/>
+        </>
+    )
 }
   
 export default Home;

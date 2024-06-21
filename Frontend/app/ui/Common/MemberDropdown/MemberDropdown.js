@@ -1,24 +1,29 @@
 'use client'
 
 import { getFirstLetters } from "@/app/utilities/function";
+import { useVisibility } from '@/app/home';
 import { AddNewMemberCard, AssignMemberList, DeleteAssignMemberList, RemoveMemberCard } from "@/app/ui/buttons";
 
 import {useState,useEffect,useRef} from "react";
 import PropTypes from "prop-types";
 
 const Member = (({member, board, code, assign, params, checklist, setBoardModal, setCardModal}) => {
+    const { setBoards } = useVisibility();
 
     const handleAddMamberCard = (async () => {
         if(code === "member-board" && !assign) {
             const value = await AddNewMemberCard(params, member);
+            setBoards(value.cardsR.columnsR.boardsR);
             setBoardModal(value.cardsR.columnsR.newBoard);
             setCardModal(value.newCard);
         } else if(code === "member-card" && !assign) {
             const value = await RemoveMemberCard(params, member);
+            setBoards(value.cardsR.columnsR.boardsR);
             setBoardModal(value.cardsR.columnsR.newBoard);
             setCardModal(value.newCard);
         } else if(code === "member-card" && assign === "list-assign") {
             const value = await AssignMemberList(params, member, checklist);
+            setBoards(value.cardsR.columnsR.boardsR);
             setBoardModal(value.cardsR.columnsR.newBoard);
             setCardModal(value.newCard);
         }

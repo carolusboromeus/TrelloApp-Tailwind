@@ -39,6 +39,20 @@ const DropdownToggle = (props) => {
             }
         }
     }, [notification, show])
+
+    useEffect(() => {
+        if(show){
+            const draghandle = document.getElementsByClassName("smooth-dnd-container");
+            for (const drag of draghandle) {
+                drag.style.position = "static";
+            }
+        } else {
+            const draghandle = document.getElementsByClassName("smooth-dnd-container");
+            for (const drag of draghandle) {
+                drag.style.position = "relative";
+            }
+        }
+    }, [show])
     
     const toggleDropdown = () => {
         setShow(!show);

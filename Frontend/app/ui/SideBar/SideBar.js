@@ -108,75 +108,79 @@ const DropdownToggle = (props) => {
 
             {/* Dropdown menu */}
             {show && (
-                <div className="absolute mt-2 w-72 bg-list-bg-color border rounded-md shadow-lg px-2 translate-x-8">
+                <div className="absolute mt-2 w-72 sm:w-100 md:w-72 bg-list-bg-color border rounded-md shadow-lg px-2 right-0 sm:right-auto sm:translate-x-8">
                     <div className='flex w-full px-3 py-3 text-sm'>
                         <div className='text-black font-semibold w-full text-center'>Create board</div>
                         <button className='text-end w-1/12' onClick={() => setShow(false)}>
                             <i className='bi bi-x text-black  hover:rounded-md hover:bg-hover-button p-1'></i>
                         </button>
                     </div>
-                    <form action={handleAddNewBoard}>
-                        <div className="mb-3 w-full">
-                            <div id='example-background' className='bg-board-bg-color w-full h-full mb-3 rounded-md pb-3'>
-                                <Image
-                                    className=' block mx-auto'
-                                    src={exampleBackground}
-                                    alt="Example Background"
+                    <form className="block sm:grid sm:grid-cols-2 md:block" action={handleAddNewBoard}>
+                        <div className="block md:block">
+                            <div className="mb-3 w-full">
+                                <div id='example-background' className='bg-board-bg-color w-full h-full mb-3 rounded-md pb-3'>
+                                    <Image
+                                        className=' block mx-auto'
+                                        src={exampleBackground}
+                                        alt="Example Background"
+                                    />
+                                </div>
+                                <label htmlFor='backgoround'>Background</label>
+                                <CirclePicker
+                                    width='200' 
+                                    circleSize={20}
+                                    name='background'
+                                    colors={colors}
+                                    value={colorBackground}
+                                    onChange={(event) => {
+                                        const example = document.getElementById("example-background");
+                                        example.style.backgroundColor = event.hex;
+                                        setColorBackground(event);
+                                    }}
                                 />
                             </div>
-                            <label htmlFor='backgoround'>Background</label>
-                            <CirclePicker
-                                width='200' 
-                                circleSize={20}
-                                name='background'
-                                colors={colors}
-                                value={colorBackground}
-                                onChange={(event) => {
-                                    const example = document.getElementById("example-background");
-                                    example.style.backgroundColor = event.hex;
-                                    setColorBackground(event);
-                                }}
-                            />
                         </div>
-                        <Field className="mb-3">
-                            <Label className="block text-gray-700 text-sm mb-2">Board title <span style={{color: "red"}}>*</span></Label>
-                            <Input
-                                className={clsx(
-                                    'shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight',
-                                    'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-blue-500/50'
-                                )}
-                                type="text" 
-                                placeholder="Input board title" 
-                                name='title' 
-                                autoComplete='false' 
-                                spellCheck='false'
-                                ref={inputBoardRef}
-                                onChange={(event) => setValue(event.target.value)}
-                            />
-                            {(value === null || value === '') && 
-                                <Description className='text-gray-700 text-xs font-light mt-2'>Board title is required</Description>
-                            }
-                        </Field>
-                        <Field className="mb-3">
-                            <Label className="block text-gray-700 text-sm mb-2">Visibility</Label>
-                            <div className="relative">
-                                <Select
+                        <div className="ml-0 sm:ml-2 md:ml-0">
+                            <Field className="mb-3 md:mb-3">
+                                <Label className="block text-gray-700 text-sm mb-2">Board title <span style={{color: "red"}}>*</span></Label>
+                                <Input
                                     className={clsx(
                                         'shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight',
-                                        'focus:outline-none focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50',
-                                        '*:text-black '
+                                        'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-blue-500/50'
                                     )}
-                                    name='visibility' 
-                                    defaultValue="Workspace"
-                                    ref={selectVisibilityRef}
-                                >
-                                    <option value="Private" title='Only board admins can see and edit this board.'>Private</option>
-                                    <option value="Workspace" title='Board members and admins can see and edit this board. Admins can close the board or remove members.'>Workspace</option>
-                                </Select>
-                                <div className='bi bi-caret-down-fill group pointer-events-none absolute top-2.5 right-2.5 size-4 text-black/50'></div>
-                            </div>
-                        </Field>
-                        <button id='btn-submit' className={`text-black w-full ${(value === null || value === '') ? "opacity-60 bg-gray-400/70" : "bg-white hover:bg-hover-button"} py-2 px-3 my-3 rounded-md shadow`} disabled={(value === null || value === '')}>Create</button>
+                                    type="text" 
+                                    placeholder="Input board title" 
+                                    name='title' 
+                                    autoComplete='false' 
+                                    spellCheck='false'
+                                    ref={inputBoardRef}
+                                    onChange={(event) => setValue(event.target.value)}
+                                />
+                                {(value === null || value === '') && 
+                                    <Description className='text-gray-700 text-xs font-light mt-2'>Board title is required</Description>
+                                }
+                            </Field>
+                            <Field className="mb-3">
+                                <Label className="block text-gray-700 text-sm mb-2">Visibility</Label>
+                                <div className="relative">
+                                    <Select
+                                        className={clsx(
+                                            'shadow appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight',
+                                            'focus:outline-none focus:outline-2 focus:-outline-offset-2 focus:outline-blue-500/50',
+                                            '*:text-black '
+                                        )}
+                                        name='visibility' 
+                                        defaultValue="Workspace"
+                                        ref={selectVisibilityRef}
+                                    >
+                                        <option value="Private" title='Only board admins can see and edit this board.'>Private</option>
+                                        <option value="Workspace" title='Board members and admins can see and edit this board. Admins can close the board or remove members.'>Workspace</option>
+                                    </Select>
+                                    <div className='bi bi-caret-down-fill group pointer-events-none absolute top-2.5 right-2.5 size-4 text-black/50'></div>
+                                </div>
+                            </Field>
+                            <button id='btn-submit' className={`text-black w-full ${(value === null || value === '') ? "opacity-60 bg-gray-400/70" : "bg-white hover:bg-hover-button"} py-2 px-3 my-3 rounded-md shadow`} disabled={(value === null || value === '')}>Create</button>
+                        </div>
                     </form>
                 </div>
             )}
@@ -193,12 +197,12 @@ const SideBar = ((props) => {
 
     return (
         <div className="sidebar text-list-bg-color sm:h-[calc(100vh-37px)] border-r border-border-color">
-            <div id='sidebar-title' className='px-gap py-1 items-center text-base border-y border-border-color flex'>
+            <div id='sidebar-title' className={`px-gap py-1 items-center text-base border-y border-border-color ${isVisible === true ? "flex" :  isSmallScreen ? "flex" : "block text-center"}`}>
                 <AnimatePresence>
                     {!isSmallScreen && (
                         <>
                             {isVisible && 
-                                <span className='w-full'>Workspace</span>
+                                <span className='w-full text-xs md:text-base'>Workspace</span>
                             }
                             <motion.div animate={{rotate: isVisible ? 0 : 180}}>
                                 <button id='arrow-md' title={isVisible ? "Collapse sidebar" : "Expand sidebar"} className='bi bi-arrow-left-short p-1 text-end hover:rounded-lg hover:bg-hover-icon' onClick={() => setIsVisible(!isVisible)}></button>
@@ -219,7 +223,7 @@ const SideBar = ((props) => {
                 {isVisible && 
                     <div className='px-gap pt-2'>
                         <div className='flex'>
-                            <div className='w-full mt-1'>
+                            <div className='w-full mt-1 text-xs md:text-base'>
                                 Your boards 
                             </div>
                             <DropdownToggle title="Create Board" setBoards={setBoards}/>

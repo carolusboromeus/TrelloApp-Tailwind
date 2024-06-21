@@ -1,6 +1,7 @@
 'use client'
 
 import { UpdateMember } from '@/app/ui/buttons';
+import { useVisibility } from '@/app/home';
 import ConfirmModal from '@/app/ui/Common/ConfirmModal';
 import { MODAL_ACTION_CLOSE, MODAL_ACTION_CONFIRM } from '@/app/utilities/constant';
 import { getFirstLetters } from '@/app/utilities/function';
@@ -11,6 +12,7 @@ import PropTypes from 'prop-types';
 const MemberBoard = ((props) => {
 
     const {member, board, setBoard} = props;
+    const { setBoards } = useVisibility();
 
     const [memberType, setMemberType] = useState("");
     const selectMemberTypeRef = useRef(null);
@@ -67,7 +69,8 @@ const MemberBoard = ((props) => {
             }
 
             const value = await UpdateMember(newMember, board);
-            setBoard(value);
+            setBoard(value.newBoard);
+            setBoards(value.boardsR);
 
             const shareModal = document.getElementById("share-modal");
             shareModal.style.display = "";
