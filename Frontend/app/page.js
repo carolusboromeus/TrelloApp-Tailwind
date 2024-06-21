@@ -7,7 +7,7 @@ export default function Home() {
   
   return (
     <div className="flex justify-center items-center h-[calc(100vh-100px)] sm:h-[calc(100vh-37px)]">
-      <h5 className="mt-gap ml-gap text-list-bg-color text-xl">Select a board or create a board</h5>
+      <h5 className="mt-gap ml-gap text-list-bg-color text-xl font-bold">Select a board or create a board</h5>
     </div>
   );
 }

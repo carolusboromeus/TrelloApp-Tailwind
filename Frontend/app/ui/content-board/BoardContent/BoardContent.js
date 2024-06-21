@@ -64,14 +64,14 @@ const BoardContent = (props) => {
     if(!board) {
         return (
             <div className='h-dvh max-h-[calc(100vh-200px)]  sm:max-h-[calc(100vh-100px)] flex justify-center items-center'>
-                <h5 className='ml-gap text-white font-bold'>Board not found</h5>
+                <h5 className='ml-gap text-white text-xl font-bold'>Board not found</h5>
             </div>
         )
     }
     else if(!params.board_id) {
         return (
-            <div className='not-found'>
-                <h5>Select a board or create a board</h5>
+            <div className='h-dvh max-h-[calc(100vh-200px)]  sm:max-h-[calc(100vh-100px)] flex justify-center items-center'>
+                <h5 className='ml-gap text-white text-xl font-bold'>Select a board or create a board</h5>
             </div>
         )
     }
