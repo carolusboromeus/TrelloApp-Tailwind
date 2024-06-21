@@ -3,7 +3,6 @@
 import { urlFile } from '@/app/lib/api';
 import { useVisibility } from '@/app/home';
 
-import './AttachmentFiles.scss';
 import { useEffect, useRef, useState } from 'react';
 import dateFormat from "dateformat";
 import PropTypes from 'prop-types';
@@ -46,41 +45,41 @@ const AttachmentFiles = (props) => {
     }, [file, showEditFileName])
 
     return (
-        <div className='group'>
-            <div className='cover-file' title={file.name}>
-                {showImage === true &&
-                    <img className='image-cover' src={`${urlFile}${file.data}`} alt={file.name}></img>
-                }
-                {showImage === false &&
-                    <div className='title-cover'>{file.name.split('.').pop()}</div>
-                }
-            </div>
-            <div className='detail-file'>
+        <div className='sm:flex my-3 ml-8 items-center'>
+            {showImage === true &&
+                <img className='-ml-2 h-auto sm:h-20 w-full sm:w-1/5 rounded-md text-center bg-slate-100 px-2 py-2' src={`${urlFile}${file.data}`} alt={file.name} title={file.name}></img>
+            }
+            {showImage === false &&
+                <div className='-ml-2 h-auto sm:h-20 w-full sm:w-1/5 rounded-md bg-slate-100 px-2 py-2 flex items-center justify-center' title={file.name}><p className='cursor-default'>{file.name.split('.').pop()}</p></div>
+            }
+            <div className='w-full mt-2 sm:mt-0 sm:w-4/5 sm:ml-3'>
                 {showEditFileName === false && 
                     <div className='position-text'>
-                        <div className='file-name'>{file.name}</div>
-                        <div>Added {dateFormat(file.date, "d mmm yyyy")} at {new Date(file.date).getHours()}:{new Date(file.date).getMinutes()}</div>
-                        <div className='file-button'>
-                            <button onClick={() => {
+                        <div className='font-base font-bold'>{file.name}</div>
+                        <div className='my-1'>Added {dateFormat(file.date, "d mmm yyyy")} at {new Date(file.date).getHours()}:{new Date(file.date).getMinutes()}</div>
+                        <div className='flex'>
+                            <button className='underline' 
+                                onClick={() => {
                                 setIsShowButtonComment(true);
-                                fileComment(file);}}>Comment</button><span>•</span> 
-                            <button onClick={() => window.location.replace(urlFile+file.data)}>Download</button><span>•</span>  
-                            <button onClick={async () => {
+                                fileComment(file);}}>Comment</button><span className='mx-1'>•</span> 
+                            <button className='underline' onClick={() => window.location.replace(urlFile+file.data)}>Download</button><span className='mx-1'>•</span>  
+                            <button className='underline' onClick={async () => {
                                 const value = await DeleteAttchmentFile(params, file);
                                 setBoards(value.cardsR.columnsR.boardsR);
                                 setBoard(value.cardsR.columnsR.newBoard);
                                 setCard(value.nCard);
-                            }}>Delete</button><span>•</span>
-                            <button onClick={() => setShowEditFileName(true)}>Edit</button>
+                            }}>Delete</button><span className='mx-1'>•</span>
+                            <button className='underline' onClick={() => setShowEditFileName(true)}>Edit</button>
                         </div>
                     </div>
                 }
                 {showEditFileName === true &&
                     <div className='edit-file'>
                         <input 
-                            className='form-control'
+                            className='py-1.5 pr-8 pl-3 rounded-md focus:outline focus:outline-blue-500'
                             ref={FileNameRef}
                             value={valueFileName}
+                            spellCheck="false"
                             onChange={(event) => {
                                 setValueFileName(event.target.value);
                             }}
@@ -91,9 +90,9 @@ const AttachmentFiles = (props) => {
                                 handleEditFile();
                             }}}
                         />
-                        <div className='group-btn'>
-                            <button className='btn badge btn-primary' onClick={() => {handleEditFile()}}>Update</button>
-                            <button className='btn badge btn-danger' onClick={() => {
+                        <div className='flex mt-2'>
+                            <button className='px-2 py-1 rounded-md font-bold text-xs text-white bg-blue-500 hover:text-black hover:bg-hover-button' onClick={() => {handleEditFile()}}>Update</button>
+                            <button className='ml-2 px-2 py-1 rounded-md font-bold text-xs text-white bg-red-500 hover:text-black hover:bg-hover-button' onClick={() => {
                                 setValueFileName("");
                                 setShowEditFileName(false);
                             }}>Cancel</button>

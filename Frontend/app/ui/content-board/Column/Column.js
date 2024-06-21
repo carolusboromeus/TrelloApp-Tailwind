@@ -155,8 +155,8 @@ const Column = (props) => {
 
     return (
         <>
-            <motion.div className="w-80 ml-3 mt-1 sm:h-[calc(100vh-119px)] *:bg-list-bg-color *:text-black *:pr-2" animate={{maxHeight: isVisible ? null : isSmallScreen ? "calc(100vh - 200px)" : ''}}>
-                <header className="column-drag-handle flex pt-1 h-11 text-base font-bold rounded-t-md cursor-pointer">
+            <motion.div className="w-80 ml-3 mt-1 h-svh max-h-[calc(100vh-260px)] sm:h-[calc(100vh-119px)] sm:max-h-fit *:bg-list-bg-color *:text-black *:pr-2" animate={{maxHeight: isVisible ? null : isSmallScreen ? "calc(100vh - 150px)" : ''}}>
+                <header className="column-drag-handle flex pt-1 h-11 text-base font-bold rounded-t-lg cursor-pointer">
                     <div className='w-10/12'>
                         <input 
                             type="text"
@@ -174,7 +174,7 @@ const Column = (props) => {
                         <DropdownMenu column={column} setBoard={setBoard} setBoards={setBoards} setColumns={setColumns}/>
                     </div>
                 </header>
-                <div className="scrollbar-card list-none m-0 max-h-[calc(100%-45px-36px)] overflow-y-auto">
+                <div className={`scrollbar-card list-none m-0 max-h-[calc(100%-45px-36px)] overflow-y-auto ${isShowAddNewCard !== false ? "rounded-b-lg" : ""}`}>
                     <Container
                         // {...column.props}
 
@@ -211,10 +211,10 @@ const Column = (props) => {
                     </Container>
                     
                     {isShowAddNewCard === true && 
-                        <div className='pb-2 pl-2 w-full'>
+                        <div className='pb-2 pt-1 pl-3 pr-1 w-full'>
                             <textarea 
                                 rows='2'
-                                className='px-2 py-1 w-full rounded-md focus:outline focus:outline-blue-500'
+                                className='px-2 py-1 w-full rounded-md resize-none focus:outline focus:outline-blue-500'
                                 placeholder='Enter a title for this card...'
                                 ref={textAreaRef}
                                 onChange={() => {

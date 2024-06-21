@@ -97,8 +97,6 @@ MemberDropdownToggle.propTypes = {
     card: PropTypes.object.isRequired,
     setBoard: PropTypes.func.isRequired,
     setCard: PropTypes.func.isRequired,
-
-    setBoards: PropTypes.func.isRequired,
 };
 
 export const FileDropdownToggle = (props) => {
@@ -220,7 +218,10 @@ export const FileDropdownToggle = (props) => {
                             encType="multipart/form-data"
                         /> */}
                     </div>
-                    <button type="submit" className='w-full mt-3 mb-3 px-3 py-1 font-bold rounded-md bg-blue-600 text-white hover:bg-hover-button hover:text-black badge'onClick={handleUploadFile}>Insert</button>
+                    <button type="submit" className='w-full mt-3 mb-3 px-3 py-1 font-bold rounded-md bg-blue-600 text-white hover:bg-hover-button hover:text-black badge'onClick={() => {
+                        handleUploadFile();
+                        setShow(false);
+                    }}>Insert</button>
                 </div>
             )}
         </div>
@@ -233,6 +234,4 @@ FileDropdownToggle.propTypes = {
     setIsFile: PropTypes.func.isRequired,
     handleChangeUploadFile: PropTypes.func.isRequired,
     handleUploadFile: PropTypes.func.isRequired,
-
-    setBoards: PropTypes.func.isRequired
 };

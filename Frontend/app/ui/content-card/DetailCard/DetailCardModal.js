@@ -1,7 +1,6 @@
 'use client'
 
-// import MemberDropdown from '@/app/ui/Common/MemberDropdown/MemberDropdown';
-// import AttachmentFiles from '@/app/ui/content-card/AttachmentFiles/AttachmentFiles';
+import AttachmentFiles from '@/app/ui/content-card/AttachmentFiles/AttachmentFiles';
 import List from '@/app/ui/content-card/List/List';
 import Comment from '@/app/ui/content-card/Comment/Comment';
 import QuillEditor from '@/app/lib/quillEditor';
@@ -421,12 +420,13 @@ const DetailCardModal = (props) => {
                             console.log(error);
                         }
                     }
+
+                    setIsFile(undefined);
                     
                 } catch (error) {
                     console.error('Error compressing image: ', error);
                 }
             }
-            setFileDropdown(false);
         }
     }
 
@@ -440,11 +440,6 @@ const DetailCardModal = (props) => {
             CommentRef.current.insertText(0, file.name, "link", `${urlFile}${file.data}`);
         }
     }
-
-    //Dropdown
-    const [fileDropdown, setFileDropdown] = useState(false);
-    const [memberDropdown, setMemberDropdown] = useState(false);
-    const [memberDropdownModal, setMemberDropdownModal] = useState(false);
 
     if(card != null && params != null ){
 
@@ -465,7 +460,7 @@ const DetailCardModal = (props) => {
                                 {/* Header Modal */}
                                 <div className='flex items-center'>
                                     <DialogTitle as="h3" className="text-black w-full">
-                                        <div className='mb-1 text-xl font-medium'>
+                                        <div className='mb-1 text-base sm:text-xl font-medium'>
                                             <i className='bi-card-heading mr-1 '></i>
                                             <input
                                                 type="text"
@@ -479,14 +474,14 @@ const DetailCardModal = (props) => {
                                                 ref={inputRef}
                                             />
                                         </div>
-                                        <div className='ml-9'>in list {column.title}</div>
+                                        <div className='ml-8'>in list {column.title}</div>
                                     </DialogTitle>
                                     <button
                                         onClick={() => router.push(`/b/${params.board_id}/${board.title.toLowerCase().replace(/ /g, "-")}`)}
                                         title="Close modal"
                                         className="p-2 hover:bg-hover-button hover:rounded-md"
                                     >
-                                        <i className='bi bi-x-lg text-black text-xl'></i>
+                                        <i className='bi bi-x sm:bi-x-lg text-black text-xl'></i>
                                     </button>
                                 </div>
 
@@ -511,7 +506,7 @@ const DetailCardModal = (props) => {
                                                                 </div>
                                                             )
                                                         })}
-                                                        <div className='ml-1'>
+                                                        <div>
                                                             <MemberDropdownToggle
                                                                 params={params}
                                                                 code={"member-modal"}
@@ -541,7 +536,7 @@ const DetailCardModal = (props) => {
                                         </div>
                                         <div className='ml-6'>
                                             {showButtonDescription === false &&  
-                                                <div id='quill-description' className={`bg-white rounded-2xl ${card.description.ops.length > 0 ? 'cursor-default' : 'cursor-pointer'}`} onClick={() => {
+                                                <div className={`bg-white rounded-2xl ${card.description.ops.length > 0 ? 'cursor-default' : 'cursor-pointer'}`} onClick={() => {
                                                     if(quillRef.current.editor.delta.ops.length <= 1 ){
                                                         setShowButtonDescription(true); 
                                                         setLastChange('');
@@ -598,7 +593,7 @@ const DetailCardModal = (props) => {
                                                 <h6 className='font-medium'>Attachments</h6>
                                             </div>
                                         }
-                                        {/* {card.files && card.files.length > 0 && 
+                                        {card.files && card.files.length > 0 && 
                                             card.files.map((file) => {
                                             return (
                                                 <AttachmentFiles 
@@ -612,7 +607,7 @@ const DetailCardModal = (props) => {
                                                     setCard={setCard}
                                                 />
                                             )
-                                        })} */}
+                                        })}
 
                                         {/* Checklist */}
                                         <div id='checklist-title' className='flex items-center mt-4 mb-3 text-base'>
@@ -748,7 +743,7 @@ const DetailCardModal = (props) => {
                                             )
                                         })}
                                     </div>
-                                    <div className='sm:col-span-1'>
+                                    <div className='ml-8 mt-5 sm:mt-0 sm:ml-0 sm:col-span-1'>
                                         <MemberDropdownToggle
                                             params={params}
                                             code={"member-dropdown"}

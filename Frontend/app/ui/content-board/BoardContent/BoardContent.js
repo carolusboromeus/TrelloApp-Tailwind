@@ -127,7 +127,7 @@ const BoardContent = (props) => {
 
                     :
 
-                    <div className='w-64 h-24 p-3 bg-list-bg-color/50 ml-2 rounded-md'>
+                    <div className='w-64 h-24 p-3 bg-list-bg-color/50 ml-2 mt-1 rounded-md'>
                         <input 
                             name='title'
                             type='text'
