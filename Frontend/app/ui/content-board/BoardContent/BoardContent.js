@@ -63,8 +63,8 @@ const BoardContent = (props) => {
 
     if(!board) {
         return (
-            <div className='not-found'>
-                <h5>Board not found</h5>
+            <div className='h-dvh max-h-[calc(100vh-200px)]  sm:max-h-[calc(100vh-100px)] flex justify-center items-center'>
+                <h5 className='ml-gap text-white font-bold'>Board not found</h5>
             </div>
         )
     }
