@@ -16,6 +16,10 @@ const MemberModal = (props) => {
     const { setBoards } = useVisibility();
     const [member, setMember] = useState([]);
 
+    const inputMemberRef = useRef(null);
+    const [query, setQuery] = useState('')
+    const [selected, setSelected] = useState(null)
+
     useEffect(() => {
         if(show){
             async function getDataMember (){
@@ -24,12 +28,14 @@ const MemberModal = (props) => {
             }
 
             getDataMember();
+
+            
         }
     }, [show])
 
-    const inputMemberRef = useRef(null);
-    const [query, setQuery] = useState('')
-    const [selected, setSelected] = useState(null)
+    if(show === true && inputMemberRef !== null && inputMemberRef.current !== null) {
+        inputMemberRef.current.focus();
+    } 
 
     const filteredMember = query === '' ? member.slice(0,5) : member.filter((person) => {
         return person.t.toLowerCase().includes(query.toLowerCase())
