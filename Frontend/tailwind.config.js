@@ -35,7 +35,9 @@ module.exports = {
         'hover-button': '#bdbdbd9d',
       },
       width: {
-        '100' : '535px'
+        '100' : '535px',
+        '1/8' : '13%',
+        '7/8' : '87%',
       }
     },
   },

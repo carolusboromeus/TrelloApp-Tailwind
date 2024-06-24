@@ -109,7 +109,10 @@ const Home = ({modal, children}) => {
         </VisibilityContext.Provider>
         <AppBar notification={notification} setNotification={setNotification} setBoards={setBoards}/>
         <div className=" h-max sm:flex w-full">
-          <motion.div className="w-full sm:w-1/5 md:w-2/12" animate={{width: isVisible ? null : isSmallScreen ? null : '6.5%', height: isVisible ? isSmallScreen ? "" : '' : isSmallScreen ? "33px" : null}}>
+          <motion.div className="w-full sm:w-1/5 md:w-1/8" 
+            animate={{width: isVisible ? null : isSmallScreen ? null : '6.5%', 
+              height: isVisible ? isSmallScreen ? "" : '' : isSmallScreen ? "33px" : null}}
+            >
             <SideBar 
               boards={boards}
               setBoards={setBoards}
@@ -119,7 +122,7 @@ const Home = ({modal, children}) => {
               isSmallScreen={isSmallScreen}/>
           </motion.div>
           <VisibilityContext.Provider value={contextValue}>
-            <motion.div className="w-full sm:w-4/5 md:w-10/12" animate={{width: isVisible ? null : isSmallScreen ? null : '93.5%'}}>
+            <motion.div className="w-full sm:w-4/5 md:w-7/8" animate={{width: isVisible ? null : isSmallScreen ? null : '93.5%'}}>
                 {children}
                 {loading && <Loading/>}
             </motion.div>
