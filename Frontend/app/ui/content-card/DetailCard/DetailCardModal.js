@@ -130,7 +130,7 @@ const DetailCardModal = (props) => {
     const [lastChange, setLastChange] = useState(null);
 
     useEffect(() => {
-        if(card !== null && card.description != null ) { 
+        if(card !== null && card.description !== null ) { 
             if(quillRef.current !== null && showButtonDescription === true) {
                 quillRef.current.focus();
                 const cursorPosition = quillRef.current.getLength();
@@ -780,7 +780,7 @@ const DetailCardModal = (props) => {
                                             handleUploadFile={handleUploadFile}
                                         />
                                     </div>
-                                    <input type='file' className='invisible' onChange={handleChangeSubmitUploadFile} ref={fileSubmitRef} encType="multipart/form-data"></input>
+                                    <input id='fileUpload' type='file' className='invisible' onChange={handleChangeSubmitUploadFile} ref={fileSubmitRef} encType="multipart/form-data"></input>
                                 </div>
                             </DialogPanel>
                         </TransitionChild>
