@@ -514,6 +514,8 @@ const DetailCardModal = (props) => {
                                                                 card={card}
                                                                 setBoard={setBoard}
                                                                 setCard={setCard}
+                                                                setShowButtonDescription={setShowButtonDescription}
+                                                                setIsShowButtonComment={setIsShowButtonComment}
                                                             />
                                                         </div>
                                                     </div>
@@ -535,7 +537,20 @@ const DetailCardModal = (props) => {
                                             }
                                         </div>
                                         <div className='ml-6'>
-                                            {showButtonDescription === false &&  
+                                            {showButtonDescription === false ? 
+                                            
+                                                card.description.ops.length === 0 ?  
+                                                
+                                                <div className='py-3 pr-8 pl-3 border border-stone-400/50 bg-white rounded-2xl text-slate-500 cursor-pointer hover:shadow-md hover:text-black' 
+                                                onClick={() => {
+                                                    setShowButtonDescription(true); 
+                                                    setLastChange('');
+                                                    setIsShowButtonComment(false);
+                                                }}>Add a more detailed description...</div>
+                    
+
+                                                :
+
                                                 <div className={`bg-white rounded-2xl ${card.description.ops.length > 0 ? 'cursor-default' : 'cursor-pointer'}`} onClick={() => {
                                                     if(quillRef.current.editor.delta.ops.length <= 1 ){
                                                         setShowButtonDescription(true); 
@@ -545,7 +560,7 @@ const DetailCardModal = (props) => {
                                                 }}>
                                                     <QuillEditor 
                                                         ref={quillRef}
-                                                        placeholder="Add a more detailed description..."
+                                                        placeholder=""
                                                         defaultValue={card.description}
                                                         modules={{
                                                             toolbar: false,
@@ -554,60 +569,65 @@ const DetailCardModal = (props) => {
                                                         onTextChange={setLastChange}
                                                     />
                                                 </div>
-                                            }
-                                            {showButtonDescription === true &&
-                                                <div id='edit-description-quill'>
-                                                    <div className="text-editor bg-white rounded-2xl">
-                                                        <CustomToolbar
-                                                            toolbarId = {column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}
-                                                            handleUploadFile = {handleUploadFile}
-                                                        />
-                                                        <QuillEditor 
-                                                            modules={{
-                                                                toolbar: {
-                                                                    container: `#${column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}`,
-                                                                },
-                                                            }}
-                                                            readOnly={false}
-                                                            ref={quillRef}
-                                                            placeholder="Add a more detailed description..."
-                                                            defaultValue={card.description}
-                                                            onTextChange={setLastChange}
-                                                        />
-                                                    </div>
-                                                    <div className='flex mt-2'>
-                                                        <button className='px-2 py-1 font-bold rounded-md bg-blue-600 text-white hover:bg-hover-button hover:text-black' onClick={() => onUpdateDescription()}>Save</button>
-                                                        <button className='ml-2 px-2 py-1 font-bold rounded-md bg-red-600 text-white hover:bg-hover-button hover:text-black' onClick={() => {
-                                                            setShowButtonDescription(false);
-                                                            setValueTextArea("");
-                                                        }}>Cancel</button>
-                                                    </div>
+
+                                            :
+
+                                            <div id='edit-description-quill'>
+                                                <div className="text-editor bg-white rounded-2xl">
+                                                    <CustomToolbar
+                                                        toolbarId = {column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}
+                                                        handleUploadFile = {handleUploadFile}
+                                                    />
+                                                    <QuillEditor 
+                                                        modules={{
+                                                            toolbar: {
+                                                                container: `#${column._id.toString().replace(/^[^a-zA-Z]+/g, '_')}`,
+                                                            },
+                                                        }}
+                                                        readOnly={false}
+                                                        ref={quillRef}
+                                                        placeholder="Add a more detailed description..."
+                                                        defaultValue={card.description}
+                                                        onTextChange={setLastChange}
+                                                    />
                                                 </div>
+                                                <div className='flex mt-2'>
+                                                    <button className='px-2 py-1 font-bold rounded-md bg-blue-600 text-white hover:bg-hover-button hover:text-black' onClick={() => onUpdateDescription()}>Save</button>
+                                                    <button className='ml-2 px-2 py-1 font-bold rounded-md bg-red-600 text-white hover:bg-hover-button hover:text-black' onClick={() => {
+                                                        setShowButtonDescription(false);
+                                                        setValueTextArea("");
+                                                    }}>Cancel</button>
+                                                </div>
+                                            </div>
                                             }
+                                            {/* {showButtonDescription === true &&
+                                            } */}
                                         </div>
 
                                         {/* Attachmen File */}
                                         {card.files && card.files.length > 0 && 
-                                            <div className='flex items-center mt-3 mb-3 text-base'>
-                                                <i className='fa fa-paperclip mr-2'></i>
-                                                <h6 className='font-medium'>Attachments</h6>
-                                            </div>
+                                            <>
+                                                <div className='flex items-center mt-3 mb-3 text-base'>
+                                                    <i className='fa fa-paperclip mr-2'></i>
+                                                    <h6 className='font-medium'>Attachments</h6>
+                                                </div>
+                                                {
+                                                    card.files.map((file) => {
+                                                    return (
+                                                        <AttachmentFiles 
+                                                            key={file._id}
+                                                            file={file}
+                                                            card={card}
+                                                            fileComment={fileComment}
+                                                            setIsShowButtonComment={setIsShowButtonComment}
+                                                            params={params}
+                                                            setBoard={setBoard}
+                                                            setCard={setCard}
+                                                        />
+                                                    )})                                                   
+                                                }
+                                            </>
                                         }
-                                        {card.files && card.files.length > 0 && 
-                                            card.files.map((file) => {
-                                            return (
-                                                <AttachmentFiles 
-                                                    key={file._id}
-                                                    file={file}
-                                                    card={card}
-                                                    fileComment={fileComment}
-                                                    setIsShowButtonComment={setIsShowButtonComment}
-                                                    params={params}
-                                                    setBoard={setBoard}
-                                                    setCard={setCard}
-                                                />
-                                            )
-                                        })}
 
                                         {/* Checklist */}
                                         <div id='checklist-title' className='flex items-center mt-4 mb-3 text-base'>

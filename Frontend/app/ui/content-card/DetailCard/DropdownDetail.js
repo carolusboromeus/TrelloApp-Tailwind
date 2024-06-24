@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 export const MemberDropdownToggle = (props) => {
-    const {params, code, board, card, setBoard, setCard} = props;
+    const {params, code, board, card, setBoard, setCard, setShowButtonDescription, setIsShowButtonComment} = props;
     const [show, setShow] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -35,11 +35,28 @@ export const MemberDropdownToggle = (props) => {
             for (const element of container) {
                 element.style.position = "relative";
             }
+
+            // const toolbar = document.getElementsByClassName("ql-size");
+            // for (const element of toolbar) {
+            //     element.style.display = "block";
+            // }
         }
     }, [show, code])
 
     const toggleDropdown = () => {
         setShow(!show);
+        if(code === "member-modal" && card.description.ops.length > 0){
+            setIsShowButtonComment(false);
+            
+            // const toolbar = document.getElementsByClassName("ql-size");
+            // for (const element of toolbar) {
+            //     element.style.display = "none";
+            //     console.log(element);
+            // }
+        } else if(code === "member-modal" && !show) {
+            setShowButtonDescription(false);
+            setIsShowButtonComment(false);
+        }
     };
 
     return (
@@ -97,6 +114,8 @@ MemberDropdownToggle.propTypes = {
     card: PropTypes.object.isRequired,
     setBoard: PropTypes.func.isRequired,
     setCard: PropTypes.func.isRequired,
+    setShowButtonDescription: PropTypes.func.isRequired,
+    setIsShowButtonComment: PropTypes.func.isRequired
 };
 
 export const FileDropdownToggle = (props) => {
