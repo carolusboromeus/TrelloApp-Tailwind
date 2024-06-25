@@ -52,14 +52,14 @@ const Board = ((props) => {
                 onMouseEnter={() => setShowIcon(true)} 
                 onMouseLeave={() => setShowIcon(false)}
             >
-                <div className='w-full flex items-center md:p-1'>
-                    <div className="w-4 h-3 md:w-6 md:h-5 mr-2 rounded border border-black/50" style={{backgroundColor: board.background.hex}}></div>
+                <div className='w-full flex items-center lg:p-1'>
+                    <div className="w-4 h-3 lg:w-6 lg:h-5 mr-2 rounded border border-black/50" style={{backgroundColor: board.background.hex}}></div>
                     <Link href={`/b/${board._id.slice(6, 14)}/${board.title.toLowerCase().replace(/ /g, "-")}`} className='w-full text-left'>
-                        <label className="board-label cursor-pointer text-xs md:text-base">{board.title}</label>
+                        <label className="board-label cursor-pointer text-xs lg:text-base">{board.title}</label>
                     </Link>
                 </div>
                 {showIcon && 
-                    <div className="md:p-1 rounded-md hover:bg-hover-button" onClick={() => toggleModel()}>
+                    <div className="lg:p-1 rounded-md hover:bg-hover-button" onClick={() => toggleModel()}>
                         <i className='bi bi-trash icon text-xs'></i>
                     </div>
                 }

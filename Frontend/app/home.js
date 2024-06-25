@@ -17,6 +17,7 @@ const Home = ({modal, children}) => {
   const [isVisible, setIsVisible] = useState(true);
   const [first, setFirst] = useState(true);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isMediumScreen, setIsMediumScreen] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -39,16 +40,42 @@ const Home = ({modal, children}) => {
   }, [boards, notification])
   
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 575px)");
-    const handleResize = () => setIsSmallScreen(mediaQuery.matches);
+    const mediaQuery = window.matchMedia("(max-width: 639px)");
     
-    handleResize(); // Initial check
-    mediaQuery.addListener(handleResize);
-    
-    return () => {
-      mediaQuery.removeListener(handleResize);
+
+    const handleResize = (mq) => {
+      setIsSmallScreen(mq.matches);
     };
-  }, []);
+
+    handleResize(mediaQuery); // Initial check
+
+    const listener = (event) => handleResize(event.media);
+
+    mediaQuery.addEventListener('change', listener);
+
+    return () => {
+      mediaQuery.removeEventListener('change', listener);
+    };
+  }, [isSmallScreen]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 765px)");
+
+    const handleResize = (mq) => {
+      setIsMediumScreen(mq.matches);
+    };
+
+    handleResize(mediaQuery); // Initial check
+
+    const listener = (event) => handleResize(event.media);
+
+    mediaQuery.addEventListener('change', listener);
+
+    return () => {
+      mediaQuery.removeEventListener('change', listener);
+    };
+
+  }, [isMediumScreen])
 
   useEffect(() => {
 
@@ -101,6 +128,8 @@ const Home = ({modal, children}) => {
     setBoards
   }), [isVisible, isSmallScreen, boards, setBoards]);
 
+  // console.log(`Visible: ${isVisible} & SmallScreen: ${isSmallScreen} & MediumScreen: ${isMediumScreen}`);
+
   return (
     <>
       <div className="trello-master h-dvh bg-board-bg-color text-app-main-color">
@@ -109,9 +138,10 @@ const Home = ({modal, children}) => {
         </VisibilityContext.Provider>
         <AppBar notification={notification} setNotification={setNotification} setBoards={setBoards}/>
         <div className=" h-max sm:flex w-full">
-          <motion.div className="w-full sm:w-1/5 md:w-1/8" 
-            animate={{width: isVisible ? null : isSmallScreen ? null : '6.5%', 
-              height: isVisible ? isSmallScreen ? "" : '' : isSmallScreen ? "33px" : null}}
+          <motion.div className={`${isSmallScreen ? "w-full" : "sm:w-1/5 md:w-1/8"}`} 
+            animate={{ width: isVisible ? (isSmallScreen ? '100%' : (isMediumScreen ? '20%' : '13%')) : (isSmallScreen ? '100%' : (isMediumScreen ? '6%' : '5%')), 
+              height: isVisible ? (isSmallScreen ? '100%' : '100%') : (isSmallScreen ? '3%' : '100%') }}
+            transition={{ duration: 0.3 }}
             >
             <SideBar 
               boards={boards}
@@ -122,7 +152,10 @@ const Home = ({modal, children}) => {
               isSmallScreen={isSmallScreen}/>
           </motion.div>
           <VisibilityContext.Provider value={contextValue}>
-            <motion.div className="w-full sm:w-4/5 md:w-7/8" animate={{width: isVisible ? null : isSmallScreen ? null : '93.5%'}}>
+            <motion.div className={`${isSmallScreen ? "w-full" : "sm:w-4/5 md:w-7/8"}`}
+              animate={{ width: isVisible ? (isSmallScreen ? '100%' : (isMediumScreen ? '80%' : '87%')) : (isSmallScreen ? '100%' : (isMediumScreen ? '94%' : '95%'))}}
+              transition={{ duration: 0.3 }}  
+            >
                 {children}
                 {loading && <Loading/>}
             </motion.div>

@@ -202,7 +202,7 @@ const SideBar = ((props) => {
                     {!isSmallScreen && (
                         <>
                             {isVisible && 
-                                <span className='w-full text-xs md:text-base'>Workspace</span>
+                                <span className='w-full text-xs lg:text-base'>Workspace</span>
                             }
                             <motion.div animate={{rotate: isVisible ? 0 : 180}}>
                                 <button id='arrow-md' title={isVisible ? "Collapse sidebar" : "Expand sidebar"} className='bi bi-arrow-left-short p-1 text-end hover:rounded-lg hover:bg-hover-icon' onClick={() => setIsVisible(!isVisible)}></button>
@@ -219,11 +219,11 @@ const SideBar = ((props) => {
                     )}
                 </AnimatePresence>
             </div>
-            <motion.div id='boards-rows' animate={{opacity: isVisible ? 1 : 0}}>
+            <motion.div id='boards-rows' style={{ display: isVisible ? 'block' : 'none' }} animate={{opacity: isVisible ? 1 : 0}} transition={{ duration: 0.3 }}>
                 {isVisible && 
                     <div className='px-gap pt-2'>
                         <div className='flex'>
-                            <div className='w-full mt-1 text-xs md:text-base'>
+                            <div className='w-full mt-1 text-xs lg:text-base'>
                                 Your boards 
                             </div>
                             <DropdownToggle title="Create Board" setBoards={setBoards}/>
