@@ -1,7 +1,8 @@
 import axios from "axios";
 
 let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiJkYzY4ZjUwZWE4OWNkZjEzMzVmNTYzN2M4ZWQ3ZWFiYiIsInVzZXJJZCI6IjY0ZTZmY2I3MjRjODM5NDNmZTYxMDRjNyIsImNvbXBhbnlJZHMiOlsiYWRpdGFtYSIsInJvb210ZXN0IiwidmljdG9yaW5kbyJdLCJpYXQiOjE3MTY4NjU0MTIsImV4cCI6MTc0ODQyMzAxMn0.bDss__o_nsjp3HNqeWY-C9Zd8JbaoOCYTARaP0Np9B0';
-const urlNode = 'http://dmdev.byonchat2.com:6969';
+// const urlNode = 'http://dmdev.byonchat2.com:6969';
+export const urlNode = 'http://localhost:8080';
 export const urlFile = `${urlNode}/files/`;
 
 export const axiosConfig = {

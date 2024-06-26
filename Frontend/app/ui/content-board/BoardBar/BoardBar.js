@@ -12,7 +12,8 @@ import clsx from 'clsx'
 import PropTypes from 'prop-types';
 
 const DropdownToggle = (props) => {
-    const {board, setBoard, setBoards} = props;
+    const { boards, notification, socket} = useVisibility();
+    const {board, setBoard} = props;
     const [show, setShow] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -82,9 +83,11 @@ const DropdownToggle = (props) => {
                         {contents.map((content) => {
                             return (
                                 <div key={content.id} className='text-black px-2 py-2 hover:bg-hover-button hover:rounded-md' onClick={async () => {
-                                    const value = await UpdateVisibility(content.name, board);
-                                    setBoards(value.boardsR);
+                                    const value = await UpdateVisibility(content.name, board, boards, notification);
+                                    // setBoards(value.boardsR);
                                     setBoard(value.newBoard);
+                                    socket.emit("updateBoard", value.newBoard);
+                                    
                                 }}>
                                     <div className='text-sm font-normal'>
                                         <i className={`${content.name === "Private" ? "bi bi-lock" : "bi bi-people"} mr-3`}></i>{content.name}{board.visibility === content.name && <i className='bi bi-check float-end'></i>}
@@ -166,7 +169,7 @@ const BoardBar = (props) => {
                     <div className='-ml-1 flex items-center'>
                         <Input
                             className={clsx(
-                                'appearance-none rounded-md bg-inherit py-2 px-2 text-list-bg-color font-bold leading-tight',
+                                'appearance-none w-auto rounded-md bg-inherit py-2 px-2 text-list-bg-color font-bold leading-tight',
                                 'focus:outline-none focus:shadow-xl focus:bg-list-bg-color focus:text-black focus:font-medium focus:w-auto'
                             )}
                             type="text"

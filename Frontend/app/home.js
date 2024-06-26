@@ -3,10 +3,11 @@
 import AppBar from "@/app/ui/AppBar/AppBar";
 import SideBar from "@/app/ui/SideBar/SideBar";
 import Loading from "./ui/Common/Loading/Loading";
-import { getData, postData } from "@/app/lib/api";
+import { urlNode, getData, postData } from "@/app/lib/api";
 
 import { useEffect, useState, useCallback, useContext, useMemo, createContext } from "react";
 import { motion } from "framer-motion";
+import io from 'socket.io-client';
 import PropTypes from 'prop-types';
 
 const VisibilityContext = createContext();
@@ -20,6 +21,55 @@ const Home = ({modal, children}) => {
   const [isMediumScreen, setIsMediumScreen] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const [isConnected, setIsConnected] = useState(false);
+  const [transport, setTransport] = useState("N/A");
+
+  // Connect to Socket.io server
+  const socket = io(urlNode);
+  
+  useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
+
+    function onConnect() {
+      setIsConnected(true);
+      setTransport(socket.io.engine.transport.name);
+
+      socket.io.engine.on("upgrade", (transport) => {
+        setTransport(transport.name);
+      });
+    }
+
+    function onDisconnect() {
+      setIsConnected(false);
+      setTransport("N/A");
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, []);
+
+  useEffect(() => {
+    
+    socket.on("message", (socket) => {
+      console.log(`connect with id ${socket}`)
+    })
+
+    socket.on("getUpdateBoards", data => {
+      setBoards(data);
+    })
+
+    return () => {
+      socket.disconnect(); // Clean up on unmount
+    };
+  }, []);
 
   const fetchData = useCallback(async () => {
     if(boards.length > 0 && notification) {
@@ -79,6 +129,9 @@ const Home = ({modal, children}) => {
 
   useEffect(() => {
 
+    // Initial data fetch when component mounts
+    fetchData();
+
     // Check for internet connection change
     const handleConnectionChange = () => {
       if (typeof navigator !== 'undefined' && navigator.onLine) {
@@ -116,42 +169,36 @@ const Home = ({modal, children}) => {
     }
   }, []);
 
-  useEffect(() => {
-    // Initial data fetch when component mounts
-    fetchData();
-  }, []);
-
   const contextValue = useMemo(() => ({
     isVisible,
     isSmallScreen,
+    notification,
+    setNotification,
     boards,
-    setBoards
-  }), [isVisible, isSmallScreen, boards, setBoards]);
+    setBoards,
+    socket
+  }), [isVisible, isSmallScreen, notification, setNotification, boards, setBoards, socket]);
 
   // console.log(`Visible: ${isVisible} & SmallScreen: ${isSmallScreen} & MediumScreen: ${isMediumScreen}`);
 
   return (
     <>
+      <p>Status: { isConnected ? "connected" : "disconnected" }</p>
+      <p>Transport: { transport }</p>
       <div className="trello-master h-dvh bg-board-bg-color text-app-main-color">
         <VisibilityContext.Provider value={contextValue}>
           <div>{modal}</div>
+          <AppBar/>
         </VisibilityContext.Provider>
-        <AppBar notification={notification} setNotification={setNotification} setBoards={setBoards}/>
         <div className=" h-max sm:flex w-full">
-          <motion.div className={`${isSmallScreen ? "w-full" : "sm:w-1/5 md:w-1/8"}`} 
-            animate={{ width: isVisible ? (isSmallScreen ? '100%' : (isMediumScreen ? '20%' : '13%')) : (isSmallScreen ? '100%' : (isMediumScreen ? '6%' : '5%')), 
-              height: isVisible ? (isSmallScreen ? '100%' : '100%') : (isSmallScreen ? '3%' : '100%') }}
-            transition={{ duration: 0.3 }}
-            >
-            <SideBar 
-              boards={boards}
-              setBoards={setBoards}
-              notification={notification}
-              isVisible={isVisible}
-              setIsVisible={setIsVisible}
-              isSmallScreen={isSmallScreen}/>
-          </motion.div>
           <VisibilityContext.Provider value={contextValue}>
+            <motion.div className={`${isSmallScreen ? "w-full" : "sm:w-1/5 md:w-1/8"}`} 
+              animate={{ width: isVisible ? (isSmallScreen ? '100%' : (isMediumScreen ? '20%' : '13%')) : (isSmallScreen ? '100%' : (isMediumScreen ? '6%' : '5%')), 
+                height: isVisible ? (isSmallScreen ? '100%' : '100%') : (isSmallScreen ? '3%' : '100%') }}
+              transition={{ duration: 0.3 }}
+              >
+              <SideBar setIsVisible={setIsVisible}/>
+            </motion.div>
             <motion.div className={`${isSmallScreen ? "w-full" : "sm:w-4/5 md:w-7/8"}`}
               animate={{ width: isVisible ? (isSmallScreen ? '100%' : (isMediumScreen ? '80%' : '87%')) : (isSmallScreen ? '100%' : (isMediumScreen ? '94%' : '95%'))}}
               transition={{ duration: 0.3 }}  

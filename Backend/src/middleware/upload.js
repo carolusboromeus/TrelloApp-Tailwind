@@ -1,4 +1,3 @@
-const util = require("util");
 const multer = require("multer");
 const maxSize = 2 * 1024 * 1024;
 const ObjectId = require('mongoose').Types.ObjectId;
@@ -29,11 +28,5 @@ const storage = multer.diskStorage({
     }
 });
 
-let uploadFile = multer({
-    storage: storage,
-    limits: { fileSize: maxSize },
-}).single("name");
-
 const upload = multer({ storage, limits: { fileSize: maxSize }});
-let uploadFileMiddleware = util.promisify(uploadFile);
-module.exports = {uploadFileMiddleware, upload};
+module.exports = upload;

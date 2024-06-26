@@ -1,5 +1,4 @@
 'use server'
-
 import { deleteFile, getData, postData, postFile } from '@/app/lib/api';
 
 import _ from 'lodash';
@@ -7,15 +6,14 @@ import { Types } from 'mongoose';
 import { fetchAllData } from '../utilities/function';
 const ObjectId = Types.ObjectId;
 
-export const UpdateNotifSettings = ( async (newNotifSettings) => {
-    const {boards} = await getData();
+export const UpdateNotifSettings = ( async (newNotifSettings, boards) => {
     postData(boards, newNotifSettings);
 })
 
-export const CreateBoard = ( async (formData, colorBackground) => {
+export const CreateBoard = ( async (formData, colorBackground, boards, notification) => {
 
     const idTemp = new ObjectId().toString();
-    const {boards, notificationSetting} = await getData();
+    // const {boards, notificationSetting} = await getData();
     const newBoard = _.cloneDeep(boards);
     newBoard.push({
         _id: idTemp,
@@ -27,12 +25,12 @@ export const CreateBoard = ( async (formData, colorBackground) => {
         background: colorBackground,
     })
 
-    postData(newBoard, notificationSetting);
+    postData(newBoard, notification);
     return newBoard;
 })
 
-export const UpdateBoard = ( async (newBoard) => {
-    const {boards, notificationSetting} = await getData();
+export const UpdateBoard = ( async (newBoard, boards, notification) => {
+    // const {boards, notificationSetting} = await getData();
 
     const boardIdUpdate = newBoard._id;
     let nboards = [...boards]; //original boards
@@ -46,7 +44,7 @@ export const UpdateBoard = ( async (newBoard) => {
     }
 
     // console.log(nboards);
-    postData(nboards, notificationSetting);
+    postData(nboards, notification);
     return nboards;
 })
 
@@ -65,7 +63,7 @@ export const UpdateOrder = (async (board, newColumns) => {
     return newBoard;
 })
 
-export const UpdateVisibility = ( async (visibility, board) => {
+export const UpdateVisibility = ( async (visibility, board, boards, notification) => {
     
     if(visibility) {
         const newBoard = {
@@ -75,7 +73,7 @@ export const UpdateVisibility = ( async (visibility, board) => {
             _destroy: false
         }
         
-        const boardsR = await UpdateBoard(newBoard);
+        const boardsR = await UpdateBoard(newBoard, boards, notification);
         return {newBoard, boardsR};
     }
 })
@@ -264,7 +262,6 @@ export const RemoveMemberCard = ( async (params, member) => {
 })
 
 export const EditTitleCard = ( async (params, title) => {
-    
     const data = await fetchAllData(params);
     if(data.card){
         const newCard = {

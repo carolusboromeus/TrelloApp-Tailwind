@@ -1,45 +1,16 @@
 require("dotenv").config();
 const express = require("express");
-const app = express();
-const port = process.env.PORT || 8080;
 const cors = require("cors");
-const {upload} = require("./src/middleware/upload");
 const axios = require('axios');
 const cron = require('node-cron');
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
 global.__basedir = __dirname;
 
-//Setup Multer
-const {deleteFoto} = require('./utils/files.cjs');
-const initRoutes = require("./src/routes/index");
-
-//Setup Express
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
-
-app.use(cors());
-initRoutes(app);
-
-app.get("/", cors(), async (req, res) => {
-    res.send("This is Home");
-});
-
-app.post("/post_file", upload.single("file") , async (req, res) => {
-    const imageData = req.file;
-
-    // let idFile;
-    // if(req.file) {
-    //     idFile = new ObjectId(req.body.id).toString();
-    //     saveFoto(req.file, idFile);
-    // }
-    res.send({imageData});
-});
-
-app.post("/delete_file", async (req, res) => {
-    if(req.body.newFile){
-        deleteFoto(req.body.newFile);
-    }
-});
+const app = express();
+const port = process.env.PORT || 8080;
+const url = `http://localhost:${port}`;
 
 let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiJkYzY4ZjUwZWE4OWNkZjEzMzVmNTYzN2M4ZWQ3ZWFiYiIsInVzZXJJZCI6IjY0ZTZmY2I3MjRjODM5NDNmZTYxMDRjNyIsImNvbXBhbnlJZHMiOlsiYWRpdGFtYSIsInJvb210ZXN0IiwidmljdG9yaW5kbyJdLCJpYXQiOjE3MTY4NjU0MTIsImV4cCI6MTc0ODQyMzAxMn0.bDss__o_nsjp3HNqeWY-C9Zd8JbaoOCYTARaP0Np9B0'
 const axiosConfig = {
@@ -48,6 +19,48 @@ const axiosConfig = {
       'Content-Type': 'application/json' // Set the Content-Type header to indicate JSON data
     }
 };
+
+//Setup Multer
+const upload = require("./src/middleware/upload");
+const controller = require("./src/controller/file.controller");
+
+//Setup Express
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+app.use(cors());
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    connectionStateRecovery: {}, 
+    cors : {
+        origin: [`http://localhost:3000`],
+    }
+});
+
+io.on("connection", (socket) => {
+    // console.log(socket.id);
+    socket.emit('message', socket.id);
+    socket.on('updateBoards', data => {
+        socket.broadcast.emit('getUpdateBoards', data );
+    })
+    socket.on('updateBoard', data => {
+        socket.broadcast.emit('getUpdateBoard', data );
+    })
+    socket.on('join-board', (board, cb) => {
+        socket.join(board);
+        cb(`Joined ${board}`);
+    })
+});
+
+app.get("/", cors(), (req, res) => {
+    res.send("This is Home");
+});
+
+app.post("/post_file", upload.single("file") , controller.uploadFile);
+
+app.post("/delete_file", controller.deleteFile);
+
+app.get("/files/:name", controller.downloadFile);
 
 async function validToken() {
     try{
@@ -286,6 +299,6 @@ cron.schedule('0 0 * * *', async () => {
     await fetchDataAndProcess();
 });
 
-app.listen(port, () => {
-    console.log(`Listening at http://localhost:${port}`);
+httpServer.listen(port, () => {
+    console.log(`Server Listening at ${url}`);
 });

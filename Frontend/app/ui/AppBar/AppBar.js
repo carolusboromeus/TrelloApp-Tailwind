@@ -1,14 +1,14 @@
 'use client'
 
 import { UpdateNotifSettings } from '@/app/ui/buttons';
+import { useVisibility } from '@/app/home';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {useState, useRef, useEffect} from 'react';
-import PropTypes from 'prop-types';
 
-const DropdownToggle = (props) => {
-    const {notification, setNotification} = props;
+const DropdownToggle = () => {
+    const { boards, notification, setNotification } = useVisibility();
     const [show, setShow] = useState(false);
     const dropdownRef = useRef(null);
     const notifEmailRef = useRef(null);
@@ -66,7 +66,7 @@ const DropdownToggle = (props) => {
                 whatsapp: false,
             }
 
-            UpdateNotifSettings(newNotifSettings);
+            UpdateNotifSettings(newNotifSettings, boards);
             setNotification(newNotifSettings);
         }
     }
@@ -119,21 +119,14 @@ const DropdownToggle = (props) => {
     )
 }
 
-DropdownToggle.propTypes = {
-    notification: PropTypes.object.isRequired,
-    setNotification: PropTypes.func.isRequired
-};
-
-const AppBar = (props) => {
-    const {notification, setNotification} = props;
-    
+const AppBar = () => {
     const router = useRouter();
 
     return(
         <nav className="navbar-app px-2 py-1 pl-gap pb-ga flex items-center w-full border-b border-border-color">
             <span className="text-sm md:text-xl w-11/12"><Link className="text-list-bg-color no-underline" href="/">Byon Task Management</Link></span>
             <div className="w-1/12 flex flex-row-reverse">
-                <DropdownToggle notification={notification} setNotification={setNotification}/>
+                <DropdownToggle/>
                 <button className="px-2 py-1 hover:bg-hover-icon hover:rounded-md" title='Notification Log' name='Notification Log' onClick={() => router.push('/notification-log')}>
                     <i className='bi bi-bell text-list-bg-color'></i>
                 </button>
@@ -141,10 +134,5 @@ const AppBar = (props) => {
         </nav>
     )
 }
-
-AppBar.propTypes = {
-    notification: PropTypes.object.isRequired,
-    setNotification: PropTypes.func.isRequired
-};
 
 export default AppBar;

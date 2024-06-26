@@ -4,6 +4,7 @@
 import Board from "@/app/ui/Board/Board";
 import { CreateBoard } from '@/app/ui/buttons';
 import exampleBackground from '@/app/assets/example-background.svg';
+import { useVisibility } from "@/app/home";
 
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
@@ -13,8 +14,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PropTypes from 'prop-types';
 import clsx from 'clsx'
 
-const DropdownToggle = (props) => {
-    const {setBoards} = props;
+const DropdownToggle = () => {
+    const {boards, notification, setBoards, socket} = useVisibility();
     const [show, setShow] = useState(false);
     const [value, setValue] = useState(null);
     const dropdownRef = useRef(null);
@@ -88,8 +89,9 @@ const DropdownToggle = (props) => {
             return;
         }
 
-        const value = await CreateBoard(formData, colorBackground);
+        const value = await CreateBoard(formData, colorBackground, boards, notification);
         setBoards(value);
+        socket.emit("updateBoards", value);
         inputBoardRef.current.value = '';
         selectVisibilityRef.current.value = "Workspace";
         setShow(false);
@@ -188,12 +190,9 @@ const DropdownToggle = (props) => {
     )
 }
 
-DropdownToggle.propTypes = {
-    setBoards: PropTypes.func.isRequired
-};
-
 const SideBar = ((props) => {
-    const {boards, setBoards, setIsVisible, isVisible, isSmallScreen} = props;
+    const { boards, isVisible, isSmallScreen } = useVisibility();
+    const { setIsVisible } = props;
 
     return (
         <div className={`sidebar text-list-bg-color sm:h-[calc(100vh-37px)] border-r border-border-color ${isVisible === true ? "border-b pb-3" : ""}`}>
@@ -226,13 +225,13 @@ const SideBar = ((props) => {
                             <div className='w-full mt-1 text-xs lg:text-base'>
                                 Your boards 
                             </div>
-                            <DropdownToggle title="Create Board" setBoards={setBoards}/>
+                            <DropdownToggle title="Create Board"/>
                         </div>
                     </div>
                 }
                 {boards && boards.length > 0 && boards.map((board, index) => {
                     return (
-                        <Board board={board} key={board._id} setBoards={setBoards}/>
+                        <Board board={board} key={board._id}/>
                     )
                 })}
             </motion.div>
@@ -241,11 +240,7 @@ const SideBar = ((props) => {
 });
 
 SideBar.propTypes = {
-    boards: PropTypes.array.isRequired,
-    setBoards: PropTypes.func.isRequired,
     setIsVisible: PropTypes.func.isRequired,
-    isVisible: PropTypes.bool.isRequired,
-    isSmallScreen: PropTypes.bool.isRequired,
 };
 
 export default SideBar;

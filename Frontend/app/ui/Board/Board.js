@@ -1,18 +1,18 @@
 'use client'
 
 import { UpdateBoard } from '@/app/ui/buttons';
-// import { getData, postData } from '@/app/lib/api';
 import ConfirmModal from '@/app/ui/Common/ConfirmModal';
 import { MODAL_ACTION_CLOSE, MODAL_ACTION_CONFIRM } from '@/app/utilities/constant';
+import { useVisibility } from '@/app/home';
 
-// import "./Board.scss";
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation'
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Board = ((props) => {
-    const {board, setBoards} = props;
+    const { boards, notification, setBoards, socket } = useVisibility();
+    const { board } = props;
     // const {activeLabel, setActiveLabel, index} = props;
     const [showIcon, setShowIcon] = useState(false);
     const [showModalDelete, setShowModalDelete] = useState(false); //show modal delete
@@ -30,8 +30,9 @@ const Board = ((props) => {
                 _destroy: true
             }
 
-            const value = await UpdateBoard(newBoard);
+            const value = await UpdateBoard(newBoard, boards, notification);
             setBoards(value);
+            socket.emit("updateBoards", value);
             document.getElementsByClassName("trello-master")[0].style.backgroundColor = "";
             document.getElementsByClassName("navbar-app")[0].style.backgroundColor = "";
             // document.getElementsByClassName("navbar-board")[0].style.backgroundColor = "";
@@ -77,7 +78,6 @@ const Board = ((props) => {
 
 Board.propTypes = {
     board: PropTypes.object.isRequired,
-    setBoards: PropTypes.func.isRequired
 };
 
 export default Board;   

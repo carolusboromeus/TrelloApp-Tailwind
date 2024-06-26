@@ -1,18 +1,18 @@
-const {uploadFileMiddleware} = require("../middleware/upload");
+// const {uploadFileMiddleware} = require("../middleware/upload");
 const fs = require("fs");
+const baseUrl = "http://dmdev.byonchat2.com:6969/files/";
 
-const upload = async (req, res) => {
+const uploadFile = (req, res) => {
     try {
-        await uploadFileMiddleware(req, res);
-
         if (req.file == undefined) {
-        return res.status(400).send({ message: "Please upload a file!" });
+            return res.status(400).send({ message: "Please upload a file!" });
         }
 
-        console.log("uploaded");
-        res.status(200).send({
-            message: "Uploaded the file successfully: " + req.file.originalname,
-        });
+        const imageData = req.file;
+    
+        console.log("Uploaded the file successfully");
+
+        res.status(200).send({imageData});
     } catch (err) {
         console.log("error  " + err);
         res.status(500).send({
@@ -21,7 +21,20 @@ const upload = async (req, res) => {
     }
 };
 
-const baseUrl = "http://dmdev.byonchat2.com:6969/files/";
+const deleteFile = (req, res) => {
+    const directoryPath = __basedir + "/assets/uploads/";
+    if(req.body.newFile && req.body.newFile._id){
+        fs.unlink(`${directoryPath}${req.body.newFile.data}`, (err) => {
+            if (err) {
+                res.status(500).send({
+                    message: "Could not delete the file. " + err,
+                });
+            }
+
+            console.log('File deleted successfully');
+        });
+    }
+};
 
 const getListFiles = (req, res) => {
     const directoryPath = __basedir + "/assets/uploads/";
@@ -46,21 +59,22 @@ const getListFiles = (req, res) => {
     });
 };
 
-const download = (req, res) => {
+const downloadFile = (req, res) => {
     const fileName = req.params.name;
     const directoryPath = __basedir + "/assets/uploads/";
 
     res.download(directoryPath + fileName, fileName, (err) => {
         if (err) {
-        res.status(500).send({
-            message: "Could not download the file. " + err,
-        });
+            res.status(500).send({
+                message: "Could not download the file. " + err,
+            });
         }
     });
 };
 
 module.exports = {
-    upload,
+    uploadFile,
+    deleteFile,
     getListFiles,
-    download,
+    downloadFile,
 };
