@@ -24,7 +24,7 @@ export const adjustHeight = (textArea) => {
     textArea.current.style.height = `${textArea.current.scrollHeight}px`;
 }
 
-export const fetchAllData = async (params) => {
+export const fetchAllData = async (params, board) => {
     try {
         const { boards } = await getData();
 
@@ -40,6 +40,15 @@ export const fetchAllData = async (params) => {
                 }
             }
         }
+
+        // if (board) {
+        //     const { columns, column, cards, card } = await fetchColumnData(board, params.card_id);
+
+        //     if (card) {
+
+        //         return { board, columns, column, cards, card };
+        //     }
+        // }
     } catch (error) {
         console.error('Error fetching data:', error);
     }

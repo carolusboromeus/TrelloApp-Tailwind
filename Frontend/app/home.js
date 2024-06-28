@@ -11,9 +11,11 @@ import io from 'socket.io-client';
 import PropTypes from 'prop-types';
 
 const VisibilityContext = createContext();
+const socket = io(urlNode);
 
 const Home = ({modal, children}) => {
-  const [boards,setBoards] = useState([]);
+  const [boards, setBoards] = useState([]);
+  const [board, setBoard] = useState(null);
   const [notification,setNotification] = useState({});
   const [isVisible, setIsVisible] = useState(true);
   const [first, setFirst] = useState(true);
@@ -22,42 +24,9 @@ const Home = ({modal, children}) => {
   const [isOnline, setIsOnline] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const [isConnected, setIsConnected] = useState(false);
-  const [transport, setTransport] = useState("N/A");
-
   // Connect to Socket.io server
-  const socket = io(urlNode);
-  
   useEffect(() => {
-    if (socket.connected) {
-      onConnect();
-    }
-
-    function onConnect() {
-      setIsConnected(true);
-      setTransport(socket.io.engine.transport.name);
-
-      socket.io.engine.on("upgrade", (transport) => {
-        setTransport(transport.name);
-      });
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-      setTransport("N/A");
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, []);
-
-  useEffect(() => {
-    
+        
     socket.on("message", (socket) => {
       console.log(`connect with id ${socket}`)
     })
@@ -66,17 +35,20 @@ const Home = ({modal, children}) => {
       setBoards(data);
     })
 
+    socket.on('connect_error', (error) => {
+      console.error("Socket.io connection error:", error);
+    })
+
     return () => {
       socket.disconnect(); // Clean up on unmount
     };
   }, []);
 
   const fetchData = useCallback(async () => {
-    if(boards.length > 0 && notification) {
+    if(boards !== null && boards.length > 0 && notification) {
       postData(boards, notification);
     } else {
       try{
-        setLoading(true);
         const {boards, notificationSetting} = await getData();
         setBoards(boards); 
         setNotification(notificationSetting);
@@ -169,6 +141,22 @@ const Home = ({modal, children}) => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleTabClose = () => {
+      if (localStorage.getItem('room')) {
+        localStorage.removeItem('room');
+      }
+    };
+
+    window.addEventListener('beforeunload', handleTabClose);
+
+    // Cleanup function for useEffect
+    return () => {
+      // Remove event listener when component unmounts
+      window.removeEventListener('beforeunload', handleTabClose);
+    };
+  }, []);
+
   const contextValue = useMemo(() => ({
     isVisible,
     isSmallScreen,
@@ -176,6 +164,8 @@ const Home = ({modal, children}) => {
     setNotification,
     boards,
     setBoards,
+    board,
+    setBoard,
     socket
   }), [isVisible, isSmallScreen, notification, setNotification, boards, setBoards, socket]);
 
@@ -183,8 +173,6 @@ const Home = ({modal, children}) => {
 
   return (
     <>
-      <p>Status: { isConnected ? "connected" : "disconnected" }</p>
-      <p>Transport: { transport }</p>
       <div className="trello-master h-dvh bg-board-bg-color text-app-main-color">
         <VisibilityContext.Provider value={contextValue}>
           <div>{modal}</div>

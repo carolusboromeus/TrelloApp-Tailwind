@@ -144,7 +144,7 @@ DateCustomInput.propTypes = {
 
 const List = (props) => {
     const {checklist, card, board, setProgressBar, setChecked, params, setBoard, setCard} = props;
-    const { setBoards } = useVisibility();
+    const { setBoards, socket } = useVisibility();
 
     const inputRef = useRef(null);
     const [labelList, setLabelList] = useState(false);
@@ -155,6 +155,7 @@ const List = (props) => {
 
     const [startDate, setStartDate] = useState('');
     const [assignDropdown, setAssignDropdown] = useState(false);
+    const [customHeader, setCustomHeader] = useState(false);
     const [showIcon, setShowIcon] = useState(false);
     const DateRef = useRef(null);
 
@@ -164,6 +165,11 @@ const List = (props) => {
                 inputRef.current.checked = true;
                 setLabelList(true);
             }
+        }  else if(checklist && checklist.check === false){
+            if(inputRef.current !== null){
+                inputRef.current.checked = false;
+                setLabelList(false);
+            }
         }
     }, [checklist])
 
@@ -171,15 +177,19 @@ const List = (props) => {
         if(inputRef.current !== null) {
             if(checklist.check === false) {
                 const value = await ValueChecklist(params, checklist, true);
-                setBoards(value.cardsR.columnsR.boardsR);
+                // setBoards(value.cardsR.columnsR.boardsR);
                 setBoard(value.cardsR.columnsR.newBoard);
                 setCard(value.newCard);
+                socket.emit('updateCard', value.newCard);
+                socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
                 setLabelList(true);
             } else if(checklist.check === true) {
                 const value = await ValueChecklist(params, checklist, false);
-                setBoards(value.cardsR.columnsR.boardsR);
+                // setBoards(value.cardsR.columnsR.boardsR);
                 setBoard(value.cardsR.columnsR.newBoard);
                 setCard(value.newCard);
+                socket.emit('updateCard', value.newCard);
+                socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
                 setLabelList(false);
             }
         }
@@ -221,9 +231,11 @@ const List = (props) => {
         
         const value = await EditList(params, checklist, list);
 
-        setBoards(value.cardsR.columnsR.boardsR);
-        setBoard(value.cardsR.columnsR.newBoard);
+        // setBoards(value.cardsR.columnsR.boardsR);
+        // setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
+        socket.emit('updateCard', value.newCard);
+        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
 
         setShowEditChecklist(false);
     }
@@ -232,9 +244,11 @@ const List = (props) => {
 
         const value = await DeleteList(params, checklist)
 
-        setBoards(value.cardsR.columnsR.boardsR);
-        setBoard(value.cardsR.columnsR.newBoard);
+        // setBoards(value.cardsR.columnsR.boardsR);
+        // setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
+        socket.emit('updateCard', value.newCard);
+        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
 
         let checked = 0;
         const myBar = document.getElementById("myBar");
@@ -266,34 +280,47 @@ const List = (props) => {
 
     const handleDueDateList = async (value) => {
         setStartDate(value);
+        setCustomHeader(false);
         const valueR = await DueDateList(params, checklist, value);
-        setBoards(valueR.cardsR.columnsR.boardsR);
+        // setBoards(valueR.cardsR.columnsR.boardsR);
         setBoard(valueR.cardsR.columnsR.newBoard);
         setCard(valueR.newCard);
+        socket.emit('updateCard', valueR.newCard);
+        socket.emit('updateAllBoard', valueR.cardsR.columnsR.newBoard);
     }
 
     const handleRemoveDueDate = ( async () => {
         setStartDate();
         const valueR = await RemoveDueDateList(params, checklist);
-        setBoards(valueR.cardsR.columnsR.boardsR);
+        // setBoards(valueR.cardsR.columnsR.boardsR);
         setBoard(valueR.cardsR.columnsR.newBoard);
         setCard(valueR.newCard);
+        socket.emit('updateCard', valueR.newCard);
+        socket.emit('updateAllBoard', valueR.cardsR.columnsR.newBoard);
+        setCustomHeader(false);
     })
 
-    const [customHeader, setCustomHeader] = useState(false);
     const CustomHeader = ({ date, decreaseMonth, increaseMonth }) => {
+        const date1 = new Date(date);
+        const date2 = new Date();
 
         return (
-            <div id='custom-header-date'>
+            <div id='custom-header-date' className='mt-2 -mb-5'>
                 {startDate &&
-                    <div id='container-clear-button'>
-                        <button id='clear-button' onClick={handleRemoveDueDate}>Remove Date</button>
+                    <div className='mb-3 mx-3'>
+                        <button className='bg-gray-700/10 text-black px-2 py-1 w-full rounded-md hover:bg-hover-button hover:font-bold' onClick={handleRemoveDueDate}>Remove Date</button>
                     </div>
                 }
-                <div id='container-date-month'>
-                    <button id='decrease-button' onClick={decreaseMonth}>{'<'}</button>
-                    <span>{dateFormat(date, "mmm yyyy")}</span>
-                    <button id='increase-button' onClick={increaseMonth}>{'>'}</button>
+                <div className='grid grid-cols-3 taxe-base'>
+                    <div className='font-semibold'>
+                        {date1 > date2 && 
+                            <button className='px-2 py-1 hover:bg-hover-button rounded-full' onClick={decreaseMonth}>{'<'}</button>
+                        }
+                    </div>
+                    <span className='font-semibold py-1'>{dateFormat(date, "mmm yyyy")}</span>
+                    <div className='font-semibold '>
+                        <button className='px-2 py-1 hover:bg-hover-button rounded-full' onClick={increaseMonth}>{'>'}</button>
+                    </div>
                 </div>
                 <div>&nbsp;</div>&nbsp;
             </div>
@@ -346,7 +373,7 @@ const List = (props) => {
                         }
                     </button>
                     <div className={`${startDate === '' ? 'w-2/12' : 'w-4/12'} flex flex-row-reverse pr-3`}>
-                        {(checklist.date || checklist.member) && 
+                        {(checklist.date || checklist.member) &&
                             <>
                                 <button className={`ml-1 px-2 py-1 bg-gray-400/50 ${startDate === null ? "w-7 h-7 rounded-full" : "rounded-md"} hover:bg-white`} title='Delete' onClick={() => {handleDeleteList()}}>
                                     <i className='bi bi-trash3 '></i>
@@ -390,9 +417,9 @@ const List = (props) => {
                                 }
                             </>
                         }
-                        {(!startDate && !checklist.member) && showIcon &&
+                        {(!startDate && !checklist.member) && showIcon === true &&
                             <>
-                                <button className='ml-1 px-2 py-1 w-7 h-7 rounded-full hover:bg-white' title='Delete' onClick={() => {handleDeleteList()}}>
+                                <button className='abc ml-1 px-2 py-1 w-7 h-7 rounded-full hover:bg-white' title='Delete' onClick={() => {handleDeleteList()}}>
                                     <i className='bi bi-trash3'></i>
                                 </button>
                                 {card && card.member.length > 0 && 

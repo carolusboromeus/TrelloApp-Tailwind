@@ -9,8 +9,7 @@ export const axiosConfig = {
     headers: {
       'Authorization': `Bearer ${token}`, // Add the Authorization header with the token
       'Content-Type': 'application/json' // Set the Content-Type header to indicate JSON data
-    },
-    cache: 'force-cache'
+    }
 };
 
 export const postData = (async (newBoard, notification) => {

@@ -11,7 +11,7 @@ const DetailCardModal = React.lazy(() => import('@/app/ui/content-card/DetailCar
 
 const Card = (props) => {
     const {card, cards, columns, board, params, setBoard, setColumns} = props;
-    const { setBoards } = useVisibility();
+    const { setBoards, socket } = useVisibility();
     const router = useRouter();
     const [isShown, setIsShown] = useState(false);
 
@@ -43,9 +43,10 @@ const Card = (props) => {
         }
 
         const value = await UpdateCard(newCard, cards, columns, board);
-        setBoards(value.columnsR.boardsR);
+        // setBoards(value.columnsR.boardsR);
         setBoard(value.columnsR.newBoard);
         setColumns(value.columnsR.ncols);
+        socket.emit('updateBoard', value.columnsR.newBoard);
         setIsShown(false);
         setIsShowEditCard(false);
     }
@@ -57,9 +58,10 @@ const Card = (props) => {
         }
 
         const value = await UpdateCard(newCard, cards, columns, board);
-        setBoards(value.columnsR.boardsR);
+        // setBoards(value.columnsR.boardsR);
         setBoard(value.columnsR.newBoard);
         setColumns(value.columnsR.ncols);
+        socket.emit('updateBoard', value.columnsR.newBoard);
     }
 
     const checkList = () => {

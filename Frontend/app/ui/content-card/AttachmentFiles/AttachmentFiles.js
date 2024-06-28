@@ -10,7 +10,7 @@ import { DeleteAttchmentFile, EditAttchmentFile } from '../../buttons';
 
 const AttachmentFiles = (props) => {
     const {file, fileComment, setIsShowButtonComment, params, setBoard, setCard} = props;
-    const { setBoards } = useVisibility();
+    const { setBoards, socket } = useVisibility();
 
     const [showEditFileName, setShowEditFileName] = useState(false); //show input
     const [valueFileName, setValueFileName] = useState(''); //to set value in variable valueTextArea
@@ -24,9 +24,11 @@ const AttachmentFiles = (props) => {
         }
 
         const value = await EditAttchmentFile(params, file, valueFileName);
-        setBoards(value.cardsR.columnsR.boardsR);
+        // setBoards(value.cardsR.columnsR.boardsR);
         setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.nCard);
+        socket.emit('updateCard', value.nCard);
+        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
         setShowEditFileName(false);
     }
 
@@ -46,12 +48,14 @@ const AttachmentFiles = (props) => {
 
     return (
         <div className='sm:flex my-3 ml-8 items-center'>
-            {showImage === true &&
-                <img className='-ml-2 h-auto sm:h-20 w-full sm:w-1/5 rounded-md text-center bg-slate-100 px-2 py-2' src={`${urlFile}${file.data}`} alt={file.name} title={file.name}></img>
-            }
-            {showImage === false &&
-                <div className='-ml-2 h-auto sm:h-20 w-full sm:w-1/5 rounded-md bg-slate-100 px-2 py-2 flex items-center justify-center' title={file.name}><p className='cursor-default'>{file.name.split('.').pop()}</p></div>
-            }
+            <div className='-ml-2 flex items-center justify-center w-full h-20 sm:w-40 rounded-md bg-slate-100'>
+                {showImage === true &&
+                    <img className='h-20 w-auto px-2 py-2' src={`${urlFile}${file.data}`} alt={file.name} title={file.name}></img>
+                }
+                {showImage === false &&
+                    <div className='h-20 w-full rounded-md bg-slate-100 px-2 py-2 flex items-center justify-center' title={file.name}><p className='cursor-default'>{file.name.split('.').pop()}</p></div>
+                }
+            </div>
             <div className='w-full mt-2 sm:mt-0 sm:w-4/5 sm:ml-3'>
                 {showEditFileName === false && 
                     <div className='position-text'>
@@ -65,9 +69,11 @@ const AttachmentFiles = (props) => {
                             <button className='underline' onClick={() => window.location.replace(urlFile+file.data)}>Download</button><span className='mx-1'>•</span>  
                             <button className='underline' onClick={async () => {
                                 const value = await DeleteAttchmentFile(params, file);
-                                setBoards(value.cardsR.columnsR.boardsR);
+                                // setBoards(value.cardsR.columnsR.boardsR);
                                 setBoard(value.cardsR.columnsR.newBoard);
                                 setCard(value.nCard);
+                                socket.emit('updateCard', value.nCard);
+                                socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
                             }}>Delete</button><span className='mx-1'>•</span>
                             <button className='underline' onClick={() => setShowEditFileName(true)}>Edit</button>
                         </div>

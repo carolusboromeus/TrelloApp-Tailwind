@@ -46,9 +46,19 @@ io.on("connection", (socket) => {
     socket.on('updateBoard', data => {
         socket.broadcast.emit('getUpdateBoard', data );
     })
+    socket.on('updateAllBoard', data => {
+        io.emit('getUpdateAllBoard', data);
+    })
+    socket.on('updateCard', (data) => {
+        socket.broadcast.emit('getUpdateCard', data);
+    })
+    socket.on('leave-board', (board,cb) => {
+        socket.leave(board);
+        cb(`Leave Room with Id: ${board}`);
+    })
     socket.on('join-board', (board, cb) => {
         socket.join(board);
-        cb(`Joined ${board}`);
+        cb(`Join Room with Id: ${board}`);
     })
 });
 

@@ -15,7 +15,8 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 
 const DropdownMenu = (props) => {
-    const {column, setBoard, setBoards, setColumns} = props;
+    const {socket} = useVisibility();
+    const {column, columns, board, setBoard, setBoards, setColumns} = props;
 
     const [showModalDelete, setShowModalDelete] = useState(false); //show modal delete
     const toggleModel = () => {
@@ -34,9 +35,10 @@ const DropdownMenu = (props) => {
             }
 
             const value =  await UpdateColumn(newColumn, columns, board);
-            setBoards(value.boardsR);
+            // setBoards(value.boardsR);
             setBoard(value.newBoard);
             setColumns(value.ncols);
+            socket.emit('updateBoard', value.newBoard);
         }
 
         toggleModel();
@@ -80,6 +82,8 @@ const DropdownMenu = (props) => {
 
 DropdownMenu.propTypes = {
     column: PropTypes.object.isRequired,
+    columns: PropTypes.array.isRequired,
+    board: PropTypes.object.isRequired,
     setBoard: PropTypes.func.isRequired,
     setBoards: PropTypes.func.isRequired,
     setColumns: PropTypes.func.isRequired
@@ -88,7 +92,7 @@ DropdownMenu.propTypes = {
 const Column = (props) => {
 
     const {column, onCardDrop, columns, board, params, setBoard, setColumns} = props;
-    const { isVisible, isSmallScreen, setBoards } = useVisibility();
+    const { isVisible, isSmallScreen, setBoards, socket } = useVisibility();
     const cards = mapOrder(column.cards, column.cardOrder, 'id');
 
     //Change Title List
@@ -123,9 +127,10 @@ const Column = (props) => {
         }
 
         const value = await UpdateColumn(newColumn, columns, board);
-        setBoards(value.boardsR);
+        // setBoards(value.boardsR);
         setBoard(value.newBoard);
         setColumns(value.ncols);
+        socket.emit('updateBoard', value.newBoard);
     }
 
     //Add New Card
@@ -146,16 +151,17 @@ const Column = (props) => {
         }
 
         const value = await CreateCard(board, columns, column, textAreaRef.current.value);
-        setBoards(value.columnsR.boardsR);
+        // setBoards(value.columnsR.boardsR);
         setBoard(value.columnsR.newBoard);
         setColumns(value.columnsR.ncols);
+        socket.emit('updateBoard', value.columnsR.newBoard);
         textAreaRef.current.value = '';
         setIsShowAddNewCard(false);
     }
 
     return (
         <>
-            <motion.div className="w-80 ml-3 mt-1 h-svh max-h-[calc(100vh-260px)] sm:h-[calc(100vh-119px)] sm:max-h-fit *:bg-list-bg-color *:text-black *:pr-2" animate={{maxHeight: isVisible ? null : isSmallScreen ? "calc(100vh - 150px)" : ''}}>
+            <motion.div className="w-80 ml-3 mt-1 h-svh max-h-[calc(100vh-300px)] sm:h-[calc(100vh-119px)] sm:max-h-fit *:bg-list-bg-color *:text-black *:pr-2" animate={{maxHeight: isVisible ? '' : isSmallScreen ? "calc(100vh - 150px)" : ''}}>
                 <header className="column-drag-handle flex pt-1 h-11 text-base font-bold rounded-t-lg cursor-pointer">
                     <div className='w-10/12'>
                         <input 
@@ -171,7 +177,7 @@ const Column = (props) => {
                         />
                     </div>
                     <div className='w-2/12'>
-                        <DropdownMenu column={column} setBoard={setBoard} setBoards={setBoards} setColumns={setColumns}/>
+                        <DropdownMenu column={column} columns={columns} board={board} setBoard={setBoard} setBoards={setBoards} setColumns={setColumns}/>
                     </div>
                 </header>
                 <div className={`scrollbar-card list-none m-0 max-h-[calc(100%-45px-36px)] overflow-y-auto ${isShowAddNewCard !== false ? "rounded-b-lg" : ""}`}>

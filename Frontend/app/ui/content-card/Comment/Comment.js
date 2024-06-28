@@ -15,7 +15,7 @@ TimeAgo.addDefaultLocale(en);
 
 const Comment = (props) => {
     const {comment, handleChangeSubmitUploadFile, setDataFromChild, params, setBoard, setCard} = props;
-    const { setBoards } = useVisibility();
+    const { setBoards, socket } = useVisibility();
 
     const [isShowEditComment, setIsShowEditComment] = useState(false);
     const CommentRef = useRef(null); //to get value in the form of object
@@ -65,9 +65,11 @@ const Comment = (props) => {
     
         // console.log(value)
         const value = await EditComment(params, comment, text);
-        setBoards(value.cardsR.columnsR.boardsR);
+        // setBoards(value.cardsR.columnsR.boardsR);
         setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.nCard);
+        socket.emit('updateCard', value.nCard);
+        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
         setIsShowEditComment(false);
     }
 
@@ -79,7 +81,7 @@ const Comment = (props) => {
                 <i className='bi-chat-left icon text-base'></i>
                 <h6 className='ml-3 text-base font-medium'>Comment</h6>
                 <ReactTimeAgo className='ml-2 text-xs' date={new Date(comment.date)} locale="en-US"/>
-                {comment.edit === true && <div id='text-edit'>(edited)</div>}
+                {comment.edit === true && <div className='ml-1 text-xs'>(edited)</div>}
             </div>
             {isShowEditComment === false &&
             <div className='mt-2 ml-8'>
@@ -104,9 +106,11 @@ const Comment = (props) => {
                     <button className='underline hover:font-medium' 
                         onClick={async () => {
                             const value = await DeleteComment(params, comment);
-                            setBoards(value.cardsR.columnsR.boardsR);
-                            setBoard(value.cardsR.columnsR.newBoard);
+                            // setBoards(value.cardsR.columnsR.boardsR);
+                            // setBoard(value.cardsR.columnsR.newBoard);
                             setCard(value.nCard);
+                            socket.emit('updateCard', value.nCard);
+                            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
                         }}>Delete</button>
                 </div>
             </div>

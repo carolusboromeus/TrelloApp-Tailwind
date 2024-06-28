@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 const MemberBoard = ((props) => {
 
     const {member, board, setBoard} = props;
-    const { setBoards } = useVisibility();
+    const { setBoards, boards, notification, socket } = useVisibility();
 
     const [memberType, setMemberType] = useState("");
     const selectMemberTypeRef = useRef(null);
@@ -39,8 +39,10 @@ const MemberBoard = ((props) => {
 
             setMemberType(value);
             
-            const valueR = await UpdateMember(newMember, board);
-            setBoard(valueR);
+            const valueR = await UpdateMember(newMember, board, boards, notification);
+            setBoard(valueR.newBoard);
+            socket.emit("updateBoard", valueR.newBoard);
+
         }
     })
 
@@ -68,9 +70,10 @@ const MemberBoard = ((props) => {
                 _destroy: true
             }
 
-            const value = await UpdateMember(newMember, board);
+            const value = await UpdateMember(newMember, board, boards, notification);
             setBoard(value.newBoard);
-            setBoards(value.boardsR);
+            socket.emit("updateBoard", value.newBoard);
+            // setBoards(value.boardsR);
 
             const shareModal = document.getElementById("share-modal");
             shareModal.style.display = "";

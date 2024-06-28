@@ -4,7 +4,7 @@ import BoardBar from "@/app/ui/content-board/BoardBar/BoardBar";
 import BoardContent from "@/app/ui/content-board/BoardContent/BoardContent";
 import { mapOrder } from "@/app/utilities/sorts";
 import { useVisibility } from '@/app/home';
-import { urlNode, getData } from "@/app/lib/api";
+import { getData } from "@/app/lib/api";
 import Loading from "@/app/ui/Common/Loading/Loading";
 
 import { useState, useEffect } from "react";
@@ -12,8 +12,7 @@ import { useRouter } from 'next/navigation';
 import PropTypes from 'prop-types';
 
 const Home = ({params}) => {
-    const {boards, isSmallScreen, setBoards, socket } = useVisibility();
-    const [board, setBoard] = useState(null);
+    const {boards, isSmallScreen, setBoards, board, setBoard, socket} = useVisibility();
     const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -22,11 +21,14 @@ const Home = ({params}) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setLoading(true);
                 const {boards} = await getData();
-                if(boards !== undefined){
+                if(boards !== null){
                     if(boards.length > 0 && params.board_id){
                         setBoards(boards);
+                        const boardInitData = boards.find(item => item._id.slice(6, 14) === params.board_id);
+                        if(boardInitData){
+                            setBoard(boardInitData);
+                        }
                     }
                 }
             } catch (error) {
@@ -40,48 +42,52 @@ const Home = ({params}) => {
     }, [params.board_id]);
 
     useEffect(() => {
-        if(boards !== undefined && boards.length > 0 && params){
-            const boardInitData = boards.find(item => item._id.slice(6, 14) === params.board_id);
-            if(boardInitData) {
-                if(params.board_title !== undefined && boardInitData.title.toLowerCase().replace(/ /g, "-") !== params.board_title){
+        if(params && loading === false && board !== null){
+            if(board._id.slice(6, 14) === params.board_id) {
+                if(params.board_title !== undefined && board.title.toLowerCase().replace(/ /g, "-") !== params.board_title){
                     router.push("/");
                 }else {
-                    socket.emit("join-board", boardInitData._id, message => {
-                        console.log(message);
-                    });
-
-                    
-                    if(params.board_id == boardInitData._id){
-                        socket.on('getUpdateBoard', data => {
-                            setBoard(data);
+                    const room = localStorage.getItem('room');
+                    if(room !== null && room !== board._id){
+                        socket.emit("leave-board", room, message => {
+                            console.log(message)
                         })
                     }
 
-                    setBoard(boardInitData);
-                    setColumns(mapOrder(boardInitData.columns, boardInitData.columnOrder, '_id'));
+                    socket.emit("join-board", board._id, message => {
+                        console.log(message);
+                        localStorage.setItem('room', board._id);
+                    });
+
+                    socket.on('getUpdateBoard', data => {
+                        if (data._id === board._id) {
+                            setBoard(data);
+                            setColumns(mapOrder(data.columns, data.columnOrder, '_id'));
+                        }
+                    })
+
+                    socket.on('getUpdateAllBoard', data => {
+                        if(data._id === board._id){
+                            setBoard(data);
+                            setColumns(mapOrder(data.columns, data.columnOrder, '_id'));
+                        }
+                    })
+
+                    setBoard(board);
+                    setColumns(mapOrder(board.columns, board.columnOrder, '_id'));
 
                     return () => {
-                        socket.disconnect(); // Clean up on unmount
+                        socket.off('getUpdateBoard'); // Clean up on unmount
                     };
                 }
 
             }
         }
-    },[boards, params.board_id])
-
-    useEffect(() => {
-        socket.on('getUpdateBoard', data => {
-            setBoard(data);
-        })
-
-        return () => {
-            socket.disconnect(); // Clean up on unmount
-        };
-    }, [])
+    },[board, loading, params.board_id])
     
     useEffect(() => {
         if (typeof document !== 'undefined' && board && !loading) {
-            // Your code that uses document here
+
             const background = document.getElementsByClassName("trello-master");
             background[0].style.backgroundColor = board.background.hex;
 
@@ -90,24 +96,27 @@ const Home = ({params}) => {
             document.getElementsByClassName("navbar-board")[0].style.backgroundColor = color;
             if(!isSmallScreen){
                 document.getElementsByClassName("sidebar")[0].style.backgroundColor = color;
+                document.getElementById("sidebar-title").style.backgroundColor = color;
+                document.getElementById("boards-rows").style.backgroundColor = null;
             } else if(isSmallScreen){
                 document.getElementById("sidebar-title").style.backgroundColor = color;
                 document.getElementById("boards-rows").style.backgroundColor = color;
                 document.getElementsByClassName("sidebar")[0].style.backgroundColor = null;
             }
         }
-    }, [board, loading, isSmallScreen])
+    }, [board, loading, isSmallScreen]);
 
     if(loading){
         return <Loading/>
+    } else {
+        return (
+            <>
+                <BoardBar params={params} board={board} setBoard={setBoard}/>
+                <BoardContent params={params} board={board} columns={columns} setBoard={setBoard} setColumns={setColumns}/>
+            </>
+        )
     }
 
-    return (
-        <>
-            <BoardBar params={params} board={board} setBoard={setBoard}/>
-            <BoardContent params={params} board={board} columns={columns} setBoard={setBoard} setColumns={setColumns}/>
-        </>
-    )
 }
   
 export default Home;

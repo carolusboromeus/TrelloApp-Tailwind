@@ -8,24 +8,30 @@ import {useState,useEffect,useRef} from "react";
 import PropTypes from "prop-types";
 
 const Member = (({member, board, code, assign, params, checklist, setBoardModal, setCardModal}) => {
-    const { setBoards } = useVisibility();
+    const { setBoards, socket } = useVisibility();
 
     const handleAddMamberCard = (async () => {
         if(code === "member-board" && !assign) {
             const value = await AddNewMemberCard(params, member);
-            setBoards(value.cardsR.columnsR.boardsR);
-            setBoardModal(value.cardsR.columnsR.newBoard);
+            // setBoards(value.cardsR.columnsR.boardsR);
+            // setBoardModal(value.cardsR.columnsR.newBoard);
             setCardModal(value.newCard);
+            socket.emit('updateCard', value.newCard);
+            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
         } else if(code === "member-card" && !assign) {
             const value = await RemoveMemberCard(params, member);
-            setBoards(value.cardsR.columnsR.boardsR);
-            setBoardModal(value.cardsR.columnsR.newBoard);
+            // setBoards(value.cardsR.columnsR.boardsR);
+            // setBoardModal(value.cardsR.columnsR.newBoard);
             setCardModal(value.newCard);
+            socket.emit('updateCard', value.newCard);
+            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
         } else if(code === "member-card" && assign === "list-assign") {
             const value = await AssignMemberList(params, member, checklist);
-            setBoards(value.cardsR.columnsR.boardsR);
-            setBoardModal(value.cardsR.columnsR.newBoard);
+            // setBoards(value.cardsR.columnsR.boardsR);
+            // setBoardModal(value.cardsR.columnsR.newBoard);
             setCardModal(value.newCard);
+            socket.emit('updateCard', value.newCard);
+            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
         }
     })
 
@@ -60,7 +66,7 @@ Member.propTypes = {
 const MemberDropdown = ((props) => {
     
     const {checklist, memberDropdown, code, params, board, card, setBoardModal, setCardModal} = props;
-
+    const {socket} = useVisibility();
     // useEffect(() => {
     //     const fetchData = async () => {
     //         if(params) {
@@ -169,8 +175,10 @@ const MemberDropdown = ((props) => {
                     <button className="mt-2 px-2 py-1 rounded-md w-full font-medium bg-slate-500 text-white hover:bg-hover-button hover:text-black" type="button" 
                     onClick={async () => {
                         const value = await DeleteAssignMemberList(params, checklist);
-                        setBoardModal(value.cardsR.columnsR.newBoard);
+                        // setBoardModal(value.cardsR.columnsR.newBoard);
                         setCardModal(value.newCard);
+                        socket.emit('updateCard', value.newCard);
+                        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
                     }}>Remove member</button>
                 }
             </div>

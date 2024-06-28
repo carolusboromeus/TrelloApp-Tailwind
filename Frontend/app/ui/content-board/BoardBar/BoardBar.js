@@ -110,8 +110,8 @@ DropdownToggle.propTypes = {
 };
 
 const BoardBar = (props) => {
-    const { setBoards } = useVisibility();
-
+    const { setBoards, socket } = useVisibility();
+    
     const {board, setBoard} = props;
     const [modalMember, setModalMember] = useState(false);
 
@@ -132,7 +132,7 @@ const BoardBar = (props) => {
     useEffect(() => {
         if(board !== null && board.title) {
             setTitleBoard(board.title);
-            inputTitleRef.current.style.width = (inputTitleRef.current.value.length + 2.2) * 8 + "px";
+            inputTitleRef.current.style.width = (board.title.length + 2.2) * 8 + "px";
         }
     }, [board, inputTitleRef])
 
@@ -159,7 +159,9 @@ const BoardBar = (props) => {
 
         const value = await UpdateBoard(newBoard);
         setBoard(newBoard);
-        setBoards(value);
+        socket.emit('updateBoard', newBoard);
+        socket.emit('updateBoards', value);
+        // setBoards(value);
     }
 
     if(board){

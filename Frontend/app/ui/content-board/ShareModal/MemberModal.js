@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 
 const MemberModal = (props) => {
     const {board, show, onAction, setBoard} = props;
-    const { setBoards } = useVisibility();
+    const { setBoards, boards, notification, socket } = useVisibility();
     const [member, setMember] = useState([]);
 
     const inputMemberRef = useRef(null);
@@ -25,6 +25,7 @@ const MemberModal = (props) => {
             async function getDataMember (){
                 const data = await getMember();
                 setMember(data);
+                setQuery('');
             }
 
             getDataMember();
@@ -44,14 +45,15 @@ const MemberModal = (props) => {
     const handleAddMemberBoard = ( async () => {
         console.log(selected);
         if(selected){
-            const value = await AddNewMember(selected, board);
-            setBoards(value.boardsR);
+            const value = await AddNewMember(selected, board, boards, notification);
+            // setBoards(value.boardsR);
             setBoard(value.newBoard);
+            socket.emit("updateBoard", value.newBoard);
 
             if(inputMemberRef.current){
                 inputMemberRef.current.value = '';
+                setQuery('');
             }
-
         }
     })
 

@@ -195,7 +195,7 @@ const SideBar = ((props) => {
     const { setIsVisible } = props;
 
     return (
-        <div className={`sidebar text-list-bg-color sm:h-[calc(100vh-37px)] border-r border-border-color ${isVisible === true ? "border-b pb-3" : ""}`}>
+        <div className={`sidebar text-list-bg-color sm:h-[calc(100vh-37px)] border-r border-border-color ${isVisible === true ? "border-b" : ""}`}>
             <div id='sidebar-title' className={`px-gap py-1 items-center text-base border-y border-border-color ${isVisible === true ? "flex" :  isSmallScreen ? "flex" : "block text-center"}`}>
                 <AnimatePresence>
                     {!isSmallScreen && (
@@ -234,6 +234,9 @@ const SideBar = ((props) => {
                         <Board board={board} key={board._id}/>
                     )
                 })}
+                {isSmallScreen && 
+                    <div className="pb-3"></div>
+                }
             </motion.div>
         </div>
     )

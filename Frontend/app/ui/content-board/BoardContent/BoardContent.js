@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 
 const BoardContent = (props) => {
     const {params, board, setBoard, columns, setColumns} = props;
-    const { setBoards } = useVisibility();
+    const { setBoards, socket } = useVisibility();
 
     //show input add cloumn
     const [isShowAddList, setIsShowAddList] = useState(false);
@@ -36,12 +36,13 @@ const BoardContent = (props) => {
 
         setColumns(newColumns);
         setBoard(newBoard);
+        socket.emit('updateBoard', newBoard);
         const value = await UpdateOrder(board, newColumns)
         // console.log(value)
-        setBoards(value);
+        // setBoards(value);
     }
 
-    const onCardDrop = (dropResult, columnId) => {
+    const onCardDrop = async (dropResult, columnId) => {
         if(dropResult.removedIndex !== null || dropResult.addedIndex !== null) {
             // console.log(">>> inside onCardDrop: ", dropResult, 'with columnId=', columnId);
 
@@ -57,7 +58,8 @@ const BoardContent = (props) => {
                 ncol.columnId = columnId;
             }
             setColumns(newColumns);
-            UpdateOrder(board, newColumns);
+            const value = await UpdateOrder(board, newColumns);
+            socket.emit("updateBoard", value);
         }
     }
 
@@ -82,11 +84,11 @@ const BoardContent = (props) => {
             
             return;
         }
-
         const value = await CreateColumn(board, columns, inputRef.current.value);
-        setBoards(value.boardsR)
+        // setBoards(value.boardsR)
         setBoard(value.newBoard);
         setColumns(value._columns);
+        socket.emit("updateBoard", value.newBoard);
         inputRef.current.value = '';
     })
 
@@ -139,9 +141,10 @@ const BoardContent = (props) => {
                                 if(!event.target.value) {setIsShowAddList(false); return null} 
                                 
                                 const value = await CreateColumn(board, columns, event.target.value);
-                                setBoards(value.boardsR);
+                                // setBoards(value.boardsR);
                                 setBoard(value.newBoard);
                                 setColumns(value._columns);
+                                socket.emit('updateBoard', value.newBoard);
                             }}}
                             spellCheck='false'
                         />

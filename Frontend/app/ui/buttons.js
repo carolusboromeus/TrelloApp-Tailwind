@@ -10,11 +10,13 @@ export const UpdateNotifSettings = ( async (newNotifSettings, boards) => {
     postData(boards, newNotifSettings);
 })
 
-export const CreateBoard = ( async (formData, colorBackground, boards, notification) => {
+export const CreateBoard = ( async (formData, colorBackground) => {
 
     const idTemp = new ObjectId().toString();
-    // const {boards, notificationSetting} = await getData();
-    const newBoard = _.cloneDeep(boards);
+    const {boards, notificationSetting} = await getData();
+    let newBoard = null;
+    
+    boards !== null ? newBoard = _.cloneDeep(boards) : newBoard = [];
     newBoard.push({
         _id: idTemp,
         title: formData.get('title'),
@@ -25,12 +27,12 @@ export const CreateBoard = ( async (formData, colorBackground, boards, notificat
         background: colorBackground,
     })
 
-    postData(newBoard, notification);
+    postData(newBoard, notificationSetting);
     return newBoard;
 })
 
-export const UpdateBoard = ( async (newBoard, boards, notification) => {
-    // const {boards, notificationSetting} = await getData();
+export const UpdateBoard = ( async (newBoard) => {
+    const {boards, notificationSetting} = await getData();
 
     const boardIdUpdate = newBoard._id;
     let nboards = [...boards]; //original boards
@@ -44,7 +46,7 @@ export const UpdateBoard = ( async (newBoard, boards, notification) => {
     }
 
     // console.log(nboards);
-    postData(nboards, notification);
+    postData(nboards, notificationSetting);
     return nboards;
 })
 
@@ -60,10 +62,10 @@ export const UpdateOrder = (async (board, newColumns) => {
     const newBoard = boards.map(b => (b._id === _board._id ? _board : b));
 
     postData(newBoard, notificationSetting);
-    return newBoard;
+    return _board;
 })
 
-export const UpdateVisibility = ( async (visibility, board, boards, notification) => {
+export const UpdateVisibility = ( async (visibility, board) => {
     
     if(visibility) {
         const newBoard = {
@@ -73,7 +75,7 @@ export const UpdateVisibility = ( async (visibility, board, boards, notification
             _destroy: false
         }
         
-        const boardsR = await UpdateBoard(newBoard, boards, notification);
+        const boardsR = await UpdateBoard(newBoard);
         return {newBoard, boardsR};
     }
 })

@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
 import imageCompression from 'browser-image-compression';
+import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 const ObjectId = require('mongoose').Types.ObjectId;
 
@@ -24,49 +25,51 @@ const DetailCardModal = (props) => {
     const router = useRouter();
 
     const {params} = props;
-    const { boards, setBoards } = useVisibility();
+    const { boards, setBoards, board, setBoard, socket } = useVisibility();
     
-    const [board, setBoard] = useState({});
     const [column, setColumn] = useState({});
     const [card, setCard] = useState(null);
+    // const [loading, setLodiang] = useState(true);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const {boards} = await getData();
-                if(boards.length > 0 && params.board_id){
-                    setBoards(boards);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const {boards} = await getData();
+    //             if(boards.length > 0 && params.board_id){
+    //                 setBoards(boards);
+    //                 const board = boards.find(item => item._id.slice(6, 14) === params.board_id);
+    //                 setBoard(board);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching data:', error);
+    //         } finally {
+    //             setLodiang(false);
+    //         }
+    //     };
 
-       fetchData();
+    //    fetchData();
 
-    }, [params.board_id]);
+    // }, [params.board_id]);
 
     useEffect(() => {
         const fetchData = async () => {
             if(params) {
-                if (boards.length > 0 && params.board_id) {
-                    const board = boards.find(item => item._id.slice(6, 14) === params.board_id);
-        
-                    if (board && params.card_id && params.card_title) {
-                        const { columns, column, card } = await fetchColumnData(board, params.card_id);
-                        if (columns.length > 0 && card && card.title.toLowerCase().replace(/ /g, "-") === params.card_title) {
-                            setBoard(board);
-                            setColumn(column);
-                            setCard(card)
-                        } else {
-                            document.getElementsByClassName("trello-master")[0].style.backgroundColor = "";
-                            document.getElementsByClassName("navbar-app")[0].style.backgroundColor = "";
-                            document.getElementsByClassName("navbar-board")[0].style.backgroundColor = "";
-                            document.getElementsByClassName("sidebar")[0].style.backgroundColor = "";
-                            document.getElementById("sidebar-title").style.backgroundColor = "";
-                            document.getElementById("boards-rows").style.backgroundColor = "";
-                            router.push('/');
-                        }
+                if (board && params.card_id && params.card_title) {
+                    const { columns, column, card } = await fetchColumnData(board, params.card_id);
+                    if (columns.length > 0 && card && card.title.toLowerCase().replace(/ /g, "-") === params.card_title) {
+                        setColumn(column);
+                        setCard(card);
+
+                        socket.on('getUpdateCard', (data) => {
+                            if(card._id === data._id){
+                                setCard(data);
+                            }
+                        })
+            
+                        return () => {
+                            socket.off('getUpdateCard'); // Clean up on unmount
+                        };
+                        
                     } else {
                         document.getElementsByClassName("trello-master")[0].style.backgroundColor = "";
                         document.getElementsByClassName("navbar-app")[0].style.backgroundColor = "";
@@ -76,12 +79,20 @@ const DetailCardModal = (props) => {
                         document.getElementById("boards-rows").style.backgroundColor = "";
                         router.push('/');
                     }
+                } else {
+                    document.getElementsByClassName("trello-master")[0].style.backgroundColor = "";
+                    document.getElementsByClassName("navbar-app")[0].style.backgroundColor = "";
+                    document.getElementsByClassName("navbar-board")[0].style.backgroundColor = "";
+                    document.getElementsByClassName("sidebar")[0].style.backgroundColor = "";
+                    document.getElementById("sidebar-title").style.backgroundColor = "";
+                    document.getElementById("boards-rows").style.backgroundColor = "";
+                    router.push('/');
                 }
             }
         };
     
         fetchData();
-    }, [params, boards]);
+    }, [params, board]);
 
     //Header Title
     const [titleCard, setTitleCard] = useState('');
@@ -116,8 +127,11 @@ const DetailCardModal = (props) => {
         if(titleCard !== '') {
             const value =  await EditTitleCard(params, titleCard);
             setBoards(value.cardsR.columnsR.boardsR);
-            setBoard(value.cardsR.columnsR.newBoard);
+            // setBoard(value.cardsR.columnsR.newBoard);
             setCard(value.newCard);
+            socket.emit('updateCard', value.newCard);
+            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+            socket.emit('updateBoards', value.cardsR.columnsR.boardsR);
         } else {
             await EditTitleCard(params, card.title);
         }
@@ -146,9 +160,11 @@ const DetailCardModal = (props) => {
         };
         
         const value = await EditDescription(params, description);
-        setBoards(value.cardsR.columnsR.boardsR);
-        setBoard(value.cardsR.columnsR.newBoard);
+        // setBoards(value.cardsR.columnsR.boardsR);
+        // setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
+        socket.emit('updateCard', value.newCard);
+        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
         textAreaRef.value = valueTextArea;
         setShowButtonDescription(false);
     }
@@ -175,10 +191,11 @@ const DetailCardModal = (props) => {
         };
 
         const value = await CreateComment(params, comment);
-        setBoards(value.cardsR.columnsR.boardsR);
-        setBoard(value.cardsR.columnsR.newBoard);
+        // setBoards(value.cardsR.columnsR.boardsR);
+        // setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
-        
+        socket.emit('updateCard', value.newCard);
+        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
         setLastChange('');
         setIsShowButtonComment(false);
     }
@@ -196,7 +213,7 @@ const DetailCardModal = (props) => {
             if(card.checklist != null ) { 
                 if(card.checklist.length > 0) {
                     let checked = 0;
-                    const myBar = document.getElementById("myBar");
+                    // const myBar = document.getElementById("myBar");
                     for(const element of card.checklist) {
                         if(element.check === true) {
                             checked++
@@ -204,7 +221,7 @@ const DetailCardModal = (props) => {
                     }
                     
                     const resultProgress = Math.round(((checked / card.checklist.length) * 100)) + "%";
-                    myBar.style.width = resultProgress;
+                    // myBar.style.width = resultProgress;
                     setProgressBar(resultProgress);
                     setChecked(checked);
                     
@@ -238,9 +255,11 @@ const DetailCardModal = (props) => {
         
         const value = await CreateList(params, list);
         setIsShowAddNewChecklist(false);
-        setBoards(value.cardsR.columnsR.boardsR);
-        setBoard(value.cardsR.columnsR.newBoard);
+        // setBoards(value.cardsR.columnsR.boardsR);
+        // setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
+        socket.emit('updateCard', value.newCard);
+        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
     }
 
     const handleShowChecked = async () => {
@@ -404,18 +423,24 @@ const DetailCardModal = (props) => {
                         try {
                             const value = await UploadAttchmentFile(params, idTemp, isFile, compressedFile);
                             
-                            setBoards(value.cardsR.columnsR.boardsR);
+                            // setBoards(value.cardsR.columnsR.boardsR);
                             setBoard(value.cardsR.columnsR.newBoard);
                             setCard(value.newCard);
+                            socket.emit('updateCard', value.newCard);
+                            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+                            
                         } catch (error) {
                             console.log(error);
                         }
                     } else {
                         try{
                             const value = await UploadAttchmentFile(params, idTemp, isFile, null);
-                            setBoards(value.cardsR.columnsR.boardsR);
+                            // setBoards(value.cardsR.columnsR.boardsR);
                             setBoard(value.cardsR.columnsR.newBoard);
                             setCard(value.newCard);
+                            socket.emit('updateCard', value.newCard);
+                            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+                            
                         } catch(error){
                             console.log(error);
                         }
@@ -441,8 +466,7 @@ const DetailCardModal = (props) => {
         }
     }
 
-    if(card != null && params != null ){
-
+    if(card !== null){
         return (
             <Transition appear show={true}>
                 <Dialog as="div" className="relative z-10 focus:outline-none" onClose={() => router.push(`/b/${params.board_id}/${board.title.toLowerCase().replace(/ /g, "-")}`)}>
@@ -643,7 +667,7 @@ const DetailCardModal = (props) => {
                                         <div className='flex items-center mt-3 mb-3' id='progress-bar'>
                                             <div id="numberProgress" className='mr-2'>{progressBar}</div>
                                             <div id="myProgress" className='m-auto w-full bg-white/70 rounded-3xl h-3'>
-                                                <div id="myBar" className='w-0 h-3 rounded-3xl bg-navbar-board-bg-color'></div>
+                                                <motion.div id="myBar" className='w-0 h-3 rounded-3xl bg-navbar-board-bg-color' animate={{width: progressBar}}></motion.div>
                                             </div>
                                         </div>
                                         {card.checklist && card.checklist.length > 0 && isShowChecked === false ? card.checklist.map((checklist) => {
