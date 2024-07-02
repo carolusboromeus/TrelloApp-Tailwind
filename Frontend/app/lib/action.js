@@ -4,8 +4,8 @@ import { fetchAllData } from "../utilities/function";
 import { UpdateCard } from "../ui/buttons";
 import { postFile } from "./api";
 
-export const UploadAttchmentFile = (async (params, idTemp, isFile, compressedFile) => {
-    const data = await fetchAllData(params);
+export const UploadAttchmentFile = (async (params, idTemp, isFile, compressedFile, board) => {
+    const data = await fetchAllData(params, board);
     if(data.card){
         let newFiles = {};
         let dataImage = null;

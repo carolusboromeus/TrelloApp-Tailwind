@@ -15,9 +15,10 @@ TimeAgo.addDefaultLocale(en);
 
 const Comment = (props) => {
     const {comment, handleChangeSubmitUploadFile, setDataFromChild, params, setBoard, setCard} = props;
-    const { setBoards, socket } = useVisibility();
+    const { setBoards, board, socket } = useVisibility();
 
     const [isShowEditComment, setIsShowEditComment] = useState(false);
+    const [defaultValue, setDefaultValue] = useState({ops:[]});
     const CommentRef = useRef(null); //to get value in the form of object
 
     useEffect(() => {
@@ -50,6 +51,12 @@ const Comment = (props) => {
 
         };
     }, [comment, CommentRef, isShowEditComment])
+
+    useEffect(() => {
+        if(comment !==  null && comment !== '') {
+            setDefaultValue(comment.text);
+        }
+    },[comment])
     
     const handleEditComment = async () => {
 
@@ -59,18 +66,24 @@ const Comment = (props) => {
             return;
         }
 
-        const text = {
-            ops:lastChange.ops
-        };
-    
-        // console.log(value)
-        const value = await EditComment(params, comment, text);
-        // setBoards(value.cardsR.columnsR.boardsR);
-        setBoard(value.cardsR.columnsR.newBoard);
-        setCard(value.nCard);
-        socket.emit('updateCard', value.nCard);
-        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
-        setIsShowEditComment(false);
+        if(Object.keys(lastChange).length > 0 && lastChange.ops[0].insert === "\n"){
+            setDefaultValue(comment.text);
+            setIsShowEditComment(false);
+        } else {
+            const text = {
+                ops:lastChange.ops
+            };
+        
+            // console.log(value)
+            const value = await EditComment(params, comment, text, board);
+            // setBoards(value.cardsR.columnsR.boardsR);
+            setDefaultValue(text);
+            setBoard(value.cardsR.columnsR.newBoard);
+            setCard(value.nCard);
+            socket.emit('updateCard', value.nCard);
+            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
+            setIsShowEditComment(false);
+        }
     }
 
     const [lastChange, setLastChange] = useState();
@@ -93,7 +106,7 @@ const Comment = (props) => {
                         modules={{
                             toolbar: false,
                         }}
-                        defaultValue={comment.text}
+                        defaultValue={defaultValue}
                         readOnly={true}
                     >
                     </QuillEditor>
@@ -105,12 +118,12 @@ const Comment = (props) => {
                     <span className='mx-1'>•</span>
                     <button className='underline hover:font-medium' 
                         onClick={async () => {
-                            const value = await DeleteComment(params, comment);
+                            const value = await DeleteComment(params, comment, board);
                             // setBoards(value.cardsR.columnsR.boardsR);
-                            // setBoard(value.cardsR.columnsR.newBoard);
+                            setBoard(value.cardsR.columnsR.newBoard);
                             setCard(value.nCard);
                             socket.emit('updateCard', value.nCard);
-                            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+                            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
                         }}>Delete</button>
                 </div>
             </div>

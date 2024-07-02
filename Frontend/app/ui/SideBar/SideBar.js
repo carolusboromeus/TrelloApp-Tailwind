@@ -8,7 +8,6 @@ import { useVisibility } from "@/app/home";
 
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
-import { CirclePicker } from 'react-color';
 import { Input, Select, Label, Field, Description } from '@headlessui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PropTypes from 'prop-types';
@@ -21,38 +20,32 @@ const DropdownToggle = () => {
     const dropdownRef = useRef(null);
     const inputBoardRef = useRef(null);
     const selectVisibilityRef = useRef(null);
-    const [colorBackground, setColorBackground] = useState({
-        hex: "#0079bf",
-        hsl: {h: 201.9895287958115, s: 1, l: 0.37450980392156863, a: 1},
-        hsv: {h: 201.9895287958115, s: 1, v: 0.7490196078431373, a: 1},
-        oldHue: 250,
-        rgb: {r: 0, g: 121, b: 191, a: 1},
-        source: "hex"}
-    );
+    const [colorBackground, setColorBackground] = useState({"r":0,"g":121,"b":191,"a":1});
 
     const colors = [
-        "#0079bf",  
-        "#0097a7", 
-        "#009688",
-        "#2d8634", 
-        "#689f38", 
-        "#4caf50", 
-        "#ff6f00", 
-        "#ff5722",
-        "#f44336", 
-        "#e91e63", 
-        "#9c27b0", 
-        "#673ab7", 
-        "#3f51b5",
-        "#344664", 
-        "#795548", 
-        "#607d8b"
+        {"t":"Ocean Boat Blue","r":0,"g":121,"b":191,"a":1},
+        {"t":"Munsell Blue","r":0,"g":151,"b":167,"a":1},
+        {"t":"Dark Cyan","r":0,"g":150,"b":136,"a":1},
+        {"t":"Japanese Laurel","r":45,"g":134,"b":52,"a":1},
+        {"t":"Palm Leaf","r":104,"g":159,"b":56,"a":1},
+        {"t":"Apple","r":76,"g":175,"b":80,"a":1},
+        {"t":"Philippine Orange","r":255,"g":111,"b":0,"a":1},
+        {"t":"Giants Orange","r":255,"g":87,"b":34,"a":1},
+        {"t":"Coral Red","r":244,"g":67,"b":54,"a":1},
+        {"t":"Razzmatazz","r":233,"g":30,"b":99,"a":1},
+        {"t":"Dark Orchid","r":156,"g":39,"b":176,"a":1},
+        {"t":"Plump Purple","r":103,"g":58,"b":183,"a":1},
+        {"t":"Violet Blue","r":63,"g":81,"b":181,"a":1},
+        {"t":"Police Blue","r":52,"g":70,"b":100,"a":1},
+        {"t":"Tuscan Red","r":128,"g":48,"b":48,"a":1},
+        {"t":"Steel Teal","r":96,"g":125,"b":139,"a":1}
     ];
 
     useEffect(() => {
         const handleOutsideClick = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setValue(null);
+                setColorBackground({"r":0,"g":121,"b":191,"a":1});
                 setShow(false);
             }
         };
@@ -95,6 +88,7 @@ const DropdownToggle = () => {
         inputBoardRef.current.value = '';
         selectVisibilityRef.current.value = "Workspace";
         setShow(false);
+        setColorBackground({"r":0,"g":121,"b":191,"a":1});
     })
 
     return (
@@ -127,19 +121,28 @@ const DropdownToggle = () => {
                                         alt="Example Background"
                                     />
                                 </div>
-                                <label htmlFor='backgoround'>Background</label>
-                                <CirclePicker
-                                    width='200' 
-                                    circleSize={20}
-                                    name='background'
-                                    colors={colors}
-                                    value={colorBackground}
-                                    onChange={(event) => {
-                                        const example = document.getElementById("example-background");
-                                        example.style.backgroundColor = event.hex;
-                                        setColorBackground(event);
-                                    }}
-                                />
+                                <label htmlFor='backgoround' className="block text-gray-700 text-sm mb-2">Background</label>
+                                <div className="grid grid-cols-8 gap-2" name='background'>
+                                    {colors.map((color, i) => {
+                                        const backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+                                        const value = {"r":color.r, "g":color.g, "b":color.b, "a":1};
+                                        const isActive = (
+                                            colorBackground.r === value.r &&
+                                            colorBackground.g === value.g &&
+                                            colorBackground.b === value.b &&
+                                            colorBackground.a === value.a
+                                        );
+                                        return (
+                                            <button key={i} className={isActive ? `px-3 py-3 border rounded-md shadow-md border-gray-600/50` : `px-3 py-3 border rounded-md hover:shadow-md hover:border-gray-600/50`} title={color.t} name={color.t} style={{backgroundColor}}
+                                                onClick={() => {
+                                                    const example = document.getElementById("example-background");
+                                                    example.style.backgroundColor = backgroundColor;
+                                                    setColorBackground(value);
+                                                }}
+                                            />
+                                        )
+                                    })}
+                                </div>
                             </div>
                         </div>
                         <div className="ml-0 sm:ml-2 md:ml-0">
@@ -195,7 +198,7 @@ const SideBar = ((props) => {
     const { setIsVisible } = props;
 
     return (
-        <div className={`sidebar text-list-bg-color sm:h-[calc(100vh-37px)] border-r border-border-color ${isVisible === true ? "border-b" : ""}`}>
+        <div className={`sidebar text-list-bg-color sm:h-[calc(100vh-37px)] border-r border-border-color bg-navbar-app-bg-color ${isVisible === true ? "border-b" : ""}`}>
             <div id='sidebar-title' className={`px-gap py-1 items-center text-base border-y border-border-color ${isVisible === true ? "flex" :  isSmallScreen ? "flex" : "block text-center"}`}>
                 <AnimatePresence>
                     {!isSmallScreen && (

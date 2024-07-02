@@ -12,33 +12,33 @@ const Member = (({member, board, code, assign, params, checklist, setBoardModal,
 
     const handleAddMamberCard = (async () => {
         if(code === "member-board" && !assign) {
-            const value = await AddNewMemberCard(params, member);
+            const value = await AddNewMemberCard(params, member, board);
             // setBoards(value.cardsR.columnsR.boardsR);
-            // setBoardModal(value.cardsR.columnsR.newBoard);
+            setBoardModal(value.cardsR.columnsR.newBoard);
             setCardModal(value.newCard);
             socket.emit('updateCard', value.newCard);
-            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
         } else if(code === "member-card" && !assign) {
-            const value = await RemoveMemberCard(params, member);
+            const value = await RemoveMemberCard(params, member, board);
             // setBoards(value.cardsR.columnsR.boardsR);
-            // setBoardModal(value.cardsR.columnsR.newBoard);
+            setBoardModal(value.cardsR.columnsR.newBoard);
             setCardModal(value.newCard);
             socket.emit('updateCard', value.newCard);
-            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
         } else if(code === "member-card" && assign === "list-assign") {
-            const value = await AssignMemberList(params, member, checklist);
+            const value = await AssignMemberList(params, member, checklist, board);
             // setBoards(value.cardsR.columnsR.boardsR);
-            // setBoardModal(value.cardsR.columnsR.newBoard);
+            setBoardModal(value.cardsR.columnsR.newBoard);
             setCardModal(value.newCard);
             socket.emit('updateCard', value.newCard);
-            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
         }
     })
 
     return(
         <button className="flex items-center p-1 rounded-md mb-1 w-full text-left hover:bg-white" onClick={handleAddMamberCard}>
             <div className="mr-2" title={member?.name}>
-                <div className="grid place-items-center w-7 h-7 bg-navbar-board-bg-color rounded-full" style={{backgroundColor: board.background.hex}}>
+                <div className="grid place-items-center w-7 h-7 bg-navbar-board-bg-color rounded-full" style={{backgroundColor: `rgb(${(board.background.r)}, ${board.background.g}, ${board.background.b})`}}>
                     <div className="text-white text-xs font-bold cursor-default">
                         {getFirstLetters(member?.name)}
                     </div>
@@ -174,11 +174,11 @@ const MemberDropdown = ((props) => {
                 {code === "list-assign" && checklist.member &&
                     <button className="mt-2 px-2 py-1 rounded-md w-full font-medium bg-slate-500 text-white hover:bg-hover-button hover:text-black" type="button" 
                     onClick={async () => {
-                        const value = await DeleteAssignMemberList(params, checklist);
-                        // setBoardModal(value.cardsR.columnsR.newBoard);
+                        const value = await DeleteAssignMemberList(params, checklist, board);
+                        setBoardModal(value.cardsR.columnsR.newBoard);
                         setCardModal(value.newCard);
                         socket.emit('updateCard', value.newCard);
-                        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+                        socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
                     }}>Remove member</button>
                 }
             </div>

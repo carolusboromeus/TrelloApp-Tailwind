@@ -39,15 +39,11 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
     // console.log(socket.id);
-    socket.emit('message', socket.id);
     socket.on('updateBoards', data => {
         socket.broadcast.emit('getUpdateBoards', data );
     })
     socket.on('updateBoard', data => {
         socket.broadcast.emit('getUpdateBoard', data );
-    })
-    socket.on('updateAllBoard', data => {
-        io.emit('getUpdateAllBoard', data);
     })
     socket.on('updateCard', (data) => {
         socket.broadcast.emit('getUpdateCard', data);

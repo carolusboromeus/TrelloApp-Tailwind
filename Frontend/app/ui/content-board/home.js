@@ -66,13 +66,6 @@ const Home = ({params}) => {
                         }
                     })
 
-                    socket.on('getUpdateAllBoard', data => {
-                        if(data._id === board._id){
-                            setBoard(data);
-                            setColumns(mapOrder(data.columns, data.columnOrder, '_id'));
-                        }
-                    })
-
                     setBoard(board);
                     setColumns(mapOrder(board.columns, board.columnOrder, '_id'));
 
@@ -89,9 +82,9 @@ const Home = ({params}) => {
         if (typeof document !== 'undefined' && board && !loading) {
 
             const background = document.getElementsByClassName("trello-master");
-            background[0].style.backgroundColor = board.background.hex;
-
-            const color = `rgb(${(board.background.rgb.r-20)}, ${board.background.rgb.g-20}, ${board.background.rgb.b-20})`;
+            // background[0].style.backgroundColor = `rgb(${(board.background.r)}, ${board.background.g}, ${board.background.b})`;
+            background[0].style.background = `linear-gradient(to bottom right, rgb(${board.background.r-10}, ${board.background.g-20}, ${board.background.b-30}), rgb(${board.background.r+10}, ${board.background.g+20}, ${board.background.b+30}))`;
+            const color = `rgb(${(board.background.r-30)}, ${board.background.g-30}, ${board.background.b-30})`;
             document.getElementsByClassName("navbar-app")[0].style.backgroundColor = color;
             document.getElementsByClassName("navbar-board")[0].style.backgroundColor = color;
             if(!isSmallScreen){

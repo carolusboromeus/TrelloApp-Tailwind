@@ -142,7 +142,7 @@ const Card = (props) => {
                                                 {card.member && card.member.length > 0 && card.member.map((member, index) => {
                                                     return (
                                                         <div className="member-photo" title={member.name} key={member._id}>
-                                                            <div className="grid place-items-center w-6 h-6 bg-navbar-board-bg-color rounded-full border-2 border-list-bg-color" style={{backgroundColor: board.background.hex}}>
+                                                            <div className="grid place-items-center w-6 h-6 bg-navbar-board-bg-color rounded-full border-2 border-list-bg-color" style={{backgroundColor: `rgb(${(board.background.r)}, ${board.background.g}, ${board.background.b})`}}>
                                                                 <div className='text-list-bg-color text-xs font-bold cursor-default'>
                                                                     {getFirstLetters(member.name)}
                                                                 </div>

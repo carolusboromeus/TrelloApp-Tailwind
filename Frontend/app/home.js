@@ -26,11 +26,6 @@ const Home = ({modal, children}) => {
 
   // Connect to Socket.io server
   useEffect(() => {
-        
-    socket.on("message", (socket) => {
-      console.log(`connect with id ${socket}`)
-    })
-
     socket.on("getUpdateBoards", data => {
       setBoards(data);
     })
@@ -167,7 +162,7 @@ const Home = ({modal, children}) => {
     board,
     setBoard,
     socket
-  }), [isVisible, isSmallScreen, notification, setNotification, boards, setBoards, socket]);
+  }), [isVisible, isSmallScreen, notification, setNotification, boards, setBoards, board, setBoard, socket]);
 
   // console.log(`Visible: ${isVisible} & SmallScreen: ${isSmallScreen} & MediumScreen: ${isMediumScreen}`);
 

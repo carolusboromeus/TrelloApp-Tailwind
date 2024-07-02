@@ -7,7 +7,7 @@ import { useVisibility } from '@/app/home';
 
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const Board = ((props) => {
@@ -16,8 +16,16 @@ const Board = ((props) => {
     // const {activeLabel, setActiveLabel, index} = props;
     const [showIcon, setShowIcon] = useState(false);
     const [showModalDelete, setShowModalDelete] = useState(false); //show modal delete
+    const [colorBackground, setColorBackground] = useState({"r":0,"g":121,"b":191,"a":1});
     const router = useRouter();
-    const pathname = usePathname()
+    const pathname = usePathname();
+
+    useEffect(() => {
+        if(board && board.background) {
+            const backgroundColor = `rgb(${board.background.r}, ${board.background.g}, ${board.background.b})`;
+            setColorBackground(backgroundColor);
+        }
+    },[])
 
     const onModalAction = (async (type) => {
         if(type === MODAL_ACTION_CLOSE){
@@ -33,11 +41,14 @@ const Board = ((props) => {
             const value = await UpdateBoard(newBoard, boards, notification);
             setBoards(value);
             socket.emit("updateBoards", value);
-            document.getElementsByClassName("trello-master")[0].style.backgroundColor = "";
-            document.getElementsByClassName("navbar-app")[0].style.backgroundColor = "";
-            // document.getElementsByClassName("navbar-board")[0].style.backgroundColor = "";
-            document.getElementsByClassName("sidebar")[0].style.backgroundColor = "";
-            router.push('/');
+            if(pathname.split("/").reverse()[1] === board._id.slice(6 ,14)){
+                document.getElementsByClassName("trello-master")[0].style.backgroundImage = "";
+                document.getElementsByClassName("navbar-app")[0].style.backgroundColor = "";
+                // document.getElementsByClassName("navbar-board")[0].style.backgroundColor = "";
+                document.getElementsByClassName("sidebar")[0].style.backgroundColor = "";
+                document.getElementById("sidebar-title").style.backgroundColor = "";
+                router.push('/');
+            }
         }
 
         toggleModel();
@@ -53,12 +64,10 @@ const Board = ((props) => {
                 onMouseEnter={() => setShowIcon(true)} 
                 onMouseLeave={() => setShowIcon(false)}
             >
-                <div className='w-full flex items-center lg:p-1'>
-                    <div className="w-4 h-3 lg:w-6 lg:h-5 mr-2 rounded border border-black/50" style={{backgroundColor: board.background.hex}}></div>
-                    <Link href={`/b/${board._id.slice(6, 14)}/${board.title.toLowerCase().replace(/ /g, "-")}`} className='w-full text-left'>
-                        <label className="board-label cursor-pointer text-xs lg:text-base">{board.title}</label>
-                    </Link>
-                </div>
+                <Link href={`/b/${board._id.slice(6, 14)}/${board.title.toLowerCase().replace(/ /g, "-")}`} className='w-full flex items-center text-left lg:p-1'>
+                    <div className="w-4 h-3 lg:w-6 lg:h-5 mr-2 rounded border border-black/50" style={{backgroundColor: colorBackground}}></div>
+                    <label className="board-label cursor-pointer text-xs lg:text-base">{board.title}</label>
+                </Link>
                 {showIcon && 
                     <div className="lg:p-1 rounded-md hover:bg-hover-button" onClick={() => toggleModel()}>
                         <i className='bi bi-trash icon text-xs'></i>

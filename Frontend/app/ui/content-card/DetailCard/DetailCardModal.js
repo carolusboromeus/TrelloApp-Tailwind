@@ -125,15 +125,14 @@ const DetailCardModal = (props) => {
         setIsFirstClick(true);
         
         if(titleCard !== '') {
-            const value =  await EditTitleCard(params, titleCard);
-            setBoards(value.cardsR.columnsR.boardsR);
-            // setBoard(value.cardsR.columnsR.newBoard);
+            const value =  await EditTitleCard(params, titleCard, board);
+            // setBoards(value.cardsR.columnsR.boardsR);
+            setBoard(value.cardsR.columnsR.newBoard);
             setCard(value.newCard);
             socket.emit('updateCard', value.newCard);
-            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
-            socket.emit('updateBoards', value.cardsR.columnsR.boardsR);
+            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
         } else {
-            await EditTitleCard(params, card.title);
+            await EditTitleCard(params, card.title, board);
         }
     }
     
@@ -141,6 +140,7 @@ const DetailCardModal = (props) => {
     const [showButtonDescription, setShowButtonDescription] = useState(false);
     const [valueTextArea, setValueTextArea] = useState('');
     const textAreaRef = useRef(null);
+    const [defaultValue, setDefaultValue] = useState({ops:[]});
     const [lastChange, setLastChange] = useState(null);
 
     useEffect(() => {
@@ -153,18 +153,24 @@ const DetailCardModal = (props) => {
         }
     }, [card, showButtonDescription])
 
+    useEffect(() => {
+        if(card !==  null && card.description !== '') {
+            setDefaultValue(card.description);
+        }
+    },[card])
+
     const onUpdateDescription = async () => {
 
         const description = {
             ops:lastChange.ops
         };
         
-        const value = await EditDescription(params, description);
+        const value = await EditDescription(params, description, board);
         // setBoards(value.cardsR.columnsR.boardsR);
-        // setBoard(value.cardsR.columnsR.newBoard);
+        setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
         socket.emit('updateCard', value.newCard);
-        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+        socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
         textAreaRef.value = valueTextArea;
         setShowButtonDescription(false);
     }
@@ -190,12 +196,12 @@ const DetailCardModal = (props) => {
             ops:lastChange.ops
         };
 
-        const value = await CreateComment(params, comment);
+        const value = await CreateComment(params, comment, board);
         // setBoards(value.cardsR.columnsR.boardsR);
-        // setBoard(value.cardsR.columnsR.newBoard);
+        setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
         socket.emit('updateCard', value.newCard);
-        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+        socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
         setLastChange('');
         setIsShowButtonComment(false);
     }
@@ -253,13 +259,15 @@ const DetailCardModal = (props) => {
             return;
         }
         
-        const value = await CreateList(params, list);
+        const value = await CreateList(params, list, board);
         setIsShowAddNewChecklist(false);
+
         // setBoards(value.cardsR.columnsR.boardsR);
-        // setBoard(value.cardsR.columnsR.newBoard);
+        setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
+        // socket.emit('updateBoards', value.cardsR.columnsR.boardsR);
         socket.emit('updateCard', value.newCard);
-        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+        socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
     }
 
     const handleShowChecked = async () => {
@@ -316,20 +324,24 @@ const DetailCardModal = (props) => {
     
                         const compressedFile = await imageCompression(event.target.files[0], options);
                         try {
-                            const value = await UploadAttchmentFile(params, idTemp, event.target.files[0], compressedFile)
-                            setBoards(value.cardsR.columnsR.boardsR);
+                            const value = await UploadAttchmentFile(params, idTemp, event.target.files[0], compressedFile, board)
+                            // setBoards(value.cardsR.columnsR.boardsR);
                             setBoard(value.cardsR.columnsR.newBoard);
                             setCard(value.newCard);
+                            socket.emit('updateCard', value.newCard);
+                            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
                             dataImage = value.dataImage;
                         } catch (error) {
                             console.log(error);
                         }
                     } else {
                         try {
-                            const value = await UploadAttchmentFile(params, idTemp, event.target.files[0], null);
-                            setBoards(value.cardsR.columnsR.boardsR);
+                            const value = await UploadAttchmentFile(params, idTemp, event.target.files[0], null, board);
+                            // setBoards(value.cardsR.columnsR.boardsR);
                             setBoard(value.cardsR.columnsR.newBoard);
                             setCard(value.newCard);
+                            socket.emit('updateCard', value.newCard);
+                            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
                             dataImage = value.dataImage;
                         } catch (error) {
                             console.log(error);
@@ -421,25 +433,25 @@ const DetailCardModal = (props) => {
     
                         const compressedFile = await imageCompression(isFile, options);
                         try {
-                            const value = await UploadAttchmentFile(params, idTemp, isFile, compressedFile);
+                            const value = await UploadAttchmentFile(params, idTemp, isFile, compressedFile, board);
                             
                             // setBoards(value.cardsR.columnsR.boardsR);
                             setBoard(value.cardsR.columnsR.newBoard);
                             setCard(value.newCard);
                             socket.emit('updateCard', value.newCard);
-                            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+                            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
                             
                         } catch (error) {
                             console.log(error);
                         }
                     } else {
                         try{
-                            const value = await UploadAttchmentFile(params, idTemp, isFile, null);
+                            const value = await UploadAttchmentFile(params, idTemp, isFile, null, board);
                             // setBoards(value.cardsR.columnsR.boardsR);
                             setBoard(value.cardsR.columnsR.newBoard);
                             setCard(value.newCard);
                             socket.emit('updateCard', value.newCard);
-                            socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+                            socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
                             
                         } catch(error){
                             console.log(error);
@@ -522,7 +534,7 @@ const DetailCardModal = (props) => {
                                                         {card.member && card.member.length > 0 && card.member.map((member, index) => {
                                                             return (
                                                                 <div className="-ml-2" title={member.name} key={member._id}>
-                                                                    <div className="mx-1 grid place-items-center w-9 h-9 bg-navbar-board-bg-color rounded-full border-2 border-list-bg-color" style={{backgroundColor: board.background.hex}}>
+                                                                    <div className="mx-1 grid place-items-center w-9 h-9 bg-navbar-board-bg-color rounded-full border-2 border-list-bg-color" style={{backgroundColor: `rgb(${(board.background.r)}, ${board.background.g}, ${board.background.b})`}}>
                                                                         <div className='text-list-bg-color font-bold cursor-default'>
                                                                             {getFirstLetters(member.name)}
                                                                         </div>
@@ -575,17 +587,11 @@ const DetailCardModal = (props) => {
 
                                                 :
 
-                                                <div className={`bg-white rounded-2xl ${card.description.ops.length > 0 ? 'cursor-default' : 'cursor-pointer'}`} onClick={() => {
-                                                    if(quillRef.current.editor.delta.ops.length <= 1 ){
-                                                        setShowButtonDescription(true); 
-                                                        setLastChange('');
-                                                        setIsShowButtonComment(false);
-                                                    }
-                                                }}>
+                                                <div className={`bg-white rounded-2xl ${card.description.ops.length > 0 ? 'cursor-default' : 'cursor-pointer'}`}>
                                                     <QuillEditor 
                                                         ref={quillRef}
                                                         placeholder=""
-                                                        defaultValue={card.description}
+                                                        defaultValue={defaultValue}
                                                         modules={{
                                                             toolbar: false,
                                                         }}

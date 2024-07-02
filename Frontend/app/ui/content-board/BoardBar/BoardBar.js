@@ -161,7 +161,7 @@ const BoardBar = (props) => {
         setBoard(newBoard);
         socket.emit('updateBoard', newBoard);
         socket.emit('updateBoards', value);
-        // setBoards(value);
+        setBoards(value);
     }
 
     if(board){
@@ -196,7 +196,7 @@ const BoardBar = (props) => {
                                 {board.member && board.member.length > 0 && board.member.toReversed().map((member, index) => {
                                     return (
                                         <div className="-mr-2" title={member.name} key={member._id}>
-                                            <div className="grid place-items-center p-1 w-7 h-7 rounded-full bg-navbar-board-bg-color border-2 border-list-bg-color" style={{backgroundColor: board.background.hex}}>
+                                            <div className="grid place-items-center p-1 w-7 h-7 rounded-full bg-navbar-board-bg-color border-2 border-list-bg-color" style={{backgroundColor: `rgb(${(board.background.r)}, ${board.background.g}, ${board.background.b})`}}>
                                                 <div className='text-list-bg-color text-xs font-bold cursor-default'>
                                                     {getFirstLetters(member.name)}
                                                 </div>

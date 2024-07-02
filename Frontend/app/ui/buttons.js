@@ -220,8 +220,8 @@ export const UpdateCard = (async (newCard, cards, columns, board) => {
 }) 
 
 // Content Card
-export const AddNewMemberCard = ( async (params, member) => {
-    const data = await fetchAllData(params);
+export const AddNewMemberCard = ( async (params, member, board) => {
+    const data = await fetchAllData(params, board);
     if(data.card){
         const newMember = {
             _id: new ObjectId().toString(),
@@ -238,8 +238,8 @@ export const AddNewMemberCard = ( async (params, member) => {
     }
 })
 
-export const RemoveMemberCard = ( async (params, member) => {
-    const data = await fetchAllData(params);
+export const RemoveMemberCard = ( async (params, member, board) => {
+    const data = await fetchAllData(params, board);
     if(data.card){
         const newMember = {
             ...member,
@@ -263,8 +263,8 @@ export const RemoveMemberCard = ( async (params, member) => {
     }
 })
 
-export const EditTitleCard = ( async (params, title) => {
-    const data = await fetchAllData(params);
+export const EditTitleCard = ( async (params, title, board) => {
+    const data = await fetchAllData(params, board);
     if(data.card){
         const newCard = {
             ...data.card,
@@ -279,9 +279,9 @@ export const EditTitleCard = ( async (params, title) => {
 })
 
 // Description
-export const EditDescription = ( async (params, text) => {
+export const EditDescription = ( async (params, text, board) => {
 
-    const data = await fetchAllData(params);
+    const data = await fetchAllData(params, board);
   
     if(Object.keys(text).length === 0){
         text = {ops: []};
@@ -304,9 +304,9 @@ export const EditDescription = ( async (params, text) => {
 })
 
 // List
-export const UpdateList = ( async (params, newList) => {
+export const UpdateList = ( async (params, newList, board) => {
 
-    const data = await fetchAllData(params);
+    const data = await fetchAllData(params, board);
     if(data.card){
         const listIdUpdate = newList._id;
     
@@ -328,9 +328,9 @@ export const UpdateList = ( async (params, newList) => {
     }
 })
 
-export const CreateList =( async (params, list) => {
+export const CreateList =( async (params, list, board) => {
 
-    const data = await fetchAllData(params);
+    const data = await fetchAllData(params, board);
     if(data.card){
         const idTemp = new ObjectId().toString();
         const newChecklist = {
@@ -353,39 +353,39 @@ export const CreateList =( async (params, list) => {
     }
 })
 
-export const EditList = ((params, checklist, text) => {
+export const EditList = ((params, checklist, text, board) => {
     
     const newChecklist = {
         ...checklist,
         list: text,
     }
 
-    const listR = UpdateList(params, newChecklist);
+    const listR = UpdateList(params, newChecklist, board);
     return(listR);
 })
 
-export const DeleteList = ((params, checklist) => {
+export const DeleteList = ((params, checklist, board) => {
     
     const newList = {
         ...checklist,
         _destroy: true
     }
 
-    const listR = UpdateList(params, newList);
+    const listR = UpdateList(params, newList, board);
     return(listR);
 })
 
-export const ValueChecklist = ((params, checklist, value) => {
+export const ValueChecklist = ((params, checklist, value, board) => {
     const newChecklist = {
         ...checklist,
         check: value,
     }
 
-    const listR = UpdateList(params, newChecklist);
+    const listR = UpdateList(params, newChecklist, board);
     return(listR);
 })
 
-export const AssignMemberList = ((params, member, checklist) => {
+export const AssignMemberList = ((params, member, checklist, board) => {
     const newMember = {
         _id: new ObjectId().toString(),
         memberId: member.memberId,
@@ -396,19 +396,19 @@ export const AssignMemberList = ((params, member, checklist) => {
     const newChecklist = checklist;
     newChecklist.member = newMember;
 
-    const listR = UpdateList(params, newChecklist);
+    const listR = UpdateList(params, newChecklist, board);
     return(listR);
 })
 
-export const DeleteAssignMemberList = ((params, checklist) => {
+export const DeleteAssignMemberList = ((params, checklist, board) => {
     const newList = checklist;
     newList.member = null;
 
-    const listR = UpdateList(params, newList);
+    const listR = UpdateList(params, newList, board);
     return(listR);
 })
 
-export const DueDateList = ((params, checklist, value) => {
+export const DueDateList = ((params, checklist, value, board) => {
     const dd = String(value.getDate()).padStart(2, '0');
     const mm = String(value.getMonth() + 1).padStart(2, '0');
     const yyyy = value.getFullYear();
@@ -419,15 +419,15 @@ export const DueDateList = ((params, checklist, value) => {
         date: date,
     }
 
-    const listR = UpdateList(params, newChecklist);
+    const listR = UpdateList(params, newChecklist, board);
     return(listR);
 })
 
-export const RemoveDueDateList = ((params, checklist) => {
+export const RemoveDueDateList = ((params, checklist, board) => {
     const newList = checklist;
     newList.date = null;
 
-    const listR = UpdateList(params, newList);
+    const listR = UpdateList(params, newList, board);
     return(listR);
 })
 
@@ -446,9 +446,9 @@ export const ShowCheckedlist = (async (params, value) => {
 })
 
 // Comment
-export const UpdateComment = (async (params, newComment) => {
+export const UpdateComment = (async (params, newComment, board) => {
 
-    const data = await fetchAllData(params);
+    const data = await fetchAllData(params, board);
     if(data.card){
         const commentsIdUpdate = newComment._id;
     
@@ -479,9 +479,9 @@ export const UpdateComment = (async (params, newComment) => {
     }
 })
 
-export const CreateComment = (async (params, text) => {
+export const CreateComment = (async (params, text, board) => {
 
-    const data = await fetchAllData(params);
+    const data = await fetchAllData(params, board);
     if(data.card){
         const dateNow = new Date();
         const idTemp = new ObjectId().toString();
@@ -504,7 +504,7 @@ export const CreateComment = (async (params, text) => {
     
 })
 
-export const EditComment = ( (params, comment, value) => {
+export const EditComment = ( (params, comment, value, board) => {
     const dateNow = new Date();
     const newComment = {
         ...comment,
@@ -513,23 +513,23 @@ export const EditComment = ( (params, comment, value) => {
         date: dateNow,
     }
 
-    const commentR = UpdateComment(params, newComment);
+    const commentR = UpdateComment(params, newComment, board);
     return commentR;
 })
 
-export const DeleteComment = ((params, comment) => {
+export const DeleteComment = ((params, comment, board) => {
     const newComment = {
         ...comment,
         _destroy: true
     }
 
-    const commentR = UpdateComment(params, newComment);
+    const commentR = UpdateComment(params, newComment, board);
     return commentR;
 })
 
 // Attachment File
-export const UpdateAttachmentFile = (async(params, newFile) => {
-    const data = await fetchAllData(params);
+export const UpdateAttachmentFile = (async(params, newFile, board) => {
+    const data = await fetchAllData(params, board);
     if(data.card){
         const fileIdUpdate = newFile._id;
     
@@ -561,8 +561,8 @@ export const UpdateAttachmentFile = (async(params, newFile) => {
     }
 })
 
-export const UploadAttchmentFile = (async (params, idTemp, isFile, compressedFile) => {
-    const data = await fetchAllData(params);
+export const UploadAttchmentFile = (async (params, idTemp, isFile, compressedFile, board) => {
+    const data = await fetchAllData(params, board);
     if(data.card){
         let newFiles = {};
         const formData = new FormData();
@@ -612,7 +612,7 @@ export const UploadAttchmentFile = (async (params, idTemp, isFile, compressedFil
     }
 })
 
-export const EditAttchmentFile = (async (params, file, value) => {
+export const EditAttchmentFile = (async (params, file, value, board) => {
     const newName = value+'.'+file.name.split('.').pop()
         
     const newFile = {
@@ -620,18 +620,18 @@ export const EditAttchmentFile = (async (params, file, value) => {
         name: newName,
     }
 
-    const fileR = await UpdateAttachmentFile(params, newFile);
+    const fileR = await UpdateAttachmentFile(params, newFile, board);
     return fileR;
     // onUpdateFile(newFile);
 })
 
-export const DeleteAttchmentFile = (async (params, file) => {
+export const DeleteAttchmentFile = (async (params, file, board) => {
     const newFile = {
         ...file,
         _destroy: true
     }
 
     deleteFile(newFile);
-    const fileR = UpdateAttachmentFile(params, newFile);
+    const fileR = UpdateAttachmentFile(params, newFile, board);
     return fileR;
 })

@@ -57,7 +57,7 @@ const DropdownToggle = (props) => {
 
                     <button className='flex items-center mt-0' onClick={toggleDropdown}>
                         <div className="member-photo" title={checklist.member.name}>
-                            <div className="grid place-items-center w-7 h-7 bg-navbar-board-bg-color rounded-full border-2 border-white" style={{backgroundColor: board.background.hex}}>
+                            <div className="grid place-items-center w-7 h-7 bg-navbar-board-bg-color rounded-full border-2 border-white" style={{backgroundColor: `rgb(${(board.background.r)}, ${board.background.g}, ${board.background.b})`}}>
                                 <div className='text-list-bg-color text-xs font-bold cursor-default hover:cursor-pointer'>
                                     {getFirstLetters(checklist.member.name)}
                                 </div>
@@ -176,20 +176,20 @@ const List = (props) => {
     const UpdateChecklist = async () => {
         if(inputRef.current !== null) {
             if(checklist.check === false) {
-                const value = await ValueChecklist(params, checklist, true);
+                const value = await ValueChecklist(params, checklist, true, board);
                 // setBoards(value.cardsR.columnsR.boardsR);
                 setBoard(value.cardsR.columnsR.newBoard);
                 setCard(value.newCard);
                 socket.emit('updateCard', value.newCard);
-                socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+                socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
                 setLabelList(true);
             } else if(checklist.check === true) {
-                const value = await ValueChecklist(params, checklist, false);
+                const value = await ValueChecklist(params, checklist, false, board);
                 // setBoards(value.cardsR.columnsR.boardsR);
                 setBoard(value.cardsR.columnsR.newBoard);
                 setCard(value.newCard);
                 socket.emit('updateCard', value.newCard);
-                socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+                socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
                 setLabelList(false);
             }
         }
@@ -229,30 +229,30 @@ const List = (props) => {
             return;
         }
         
-        const value = await EditList(params, checklist, list);
+        const value = await EditList(params, checklist, list, board);
 
         // setBoards(value.cardsR.columnsR.boardsR);
-        // setBoard(value.cardsR.columnsR.newBoard);
+        setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
         socket.emit('updateCard', value.newCard);
-        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+        socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
 
         setShowEditChecklist(false);
     }
 
     const handleDeleteList = async () => {
 
-        const value = await DeleteList(params, checklist)
+        const value = await DeleteList(params, checklist, board)
 
         // setBoards(value.cardsR.columnsR.boardsR);
-        // setBoard(value.cardsR.columnsR.newBoard);
+        setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.newCard);
         socket.emit('updateCard', value.newCard);
-        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+        socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
 
         let checked = 0;
         const myBar = document.getElementById("myBar");
-        if(card.checklist.length !== 0) {
+        if(card.checklist.length > 1) {
             for(const element of card.checklist) {
                 if(element.check === true) {
                     checked++
@@ -263,8 +263,8 @@ const List = (props) => {
             myBar.style.width = result;
             setProgressBar(result);
         } else {
-            myBar.style.width = 0 + "%";
-            setProgressBar(0+"%");
+            myBar.style.width = "0%";
+            setProgressBar("0%");
         }
         
         setChecked(checked);
@@ -281,23 +281,24 @@ const List = (props) => {
     const handleDueDateList = async (value) => {
         setStartDate(value);
         setCustomHeader(false);
-        const valueR = await DueDateList(params, checklist, value);
+        const valueR = await DueDateList(params, checklist, value, board);
         // setBoards(valueR.cardsR.columnsR.boardsR);
         setBoard(valueR.cardsR.columnsR.newBoard);
         setCard(valueR.newCard);
         socket.emit('updateCard', valueR.newCard);
-        socket.emit('updateAllBoard', valueR.cardsR.columnsR.newBoard);
+        socket.emit('updateBoard', valueR.cardsR.columnsR.newBoard);
     }
 
     const handleRemoveDueDate = ( async () => {
-        setStartDate();
-        const valueR = await RemoveDueDateList(params, checklist);
+        setStartDate('');
+        setCustomHeader(false);
+        
+        const valueR = await RemoveDueDateList(params, checklist, board);
         // setBoards(valueR.cardsR.columnsR.boardsR);
         setBoard(valueR.cardsR.columnsR.newBoard);
         setCard(valueR.newCard);
         socket.emit('updateCard', valueR.newCard);
-        socket.emit('updateAllBoard', valueR.cardsR.columnsR.newBoard);
-        setCustomHeader(false);
+        socket.emit('updateBoard', valueR.cardsR.columnsR.newBoard);
     })
 
     const CustomHeader = ({ date, decreaseMonth, increaseMonth }) => {

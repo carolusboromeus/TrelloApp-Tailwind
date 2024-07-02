@@ -10,7 +10,7 @@ import 'quill/dist/quill.snow.css';
 const Editor = forwardRef(
   ({ defaultValue, onTextChange, placeholder, modules, readOnly}, ref) => {
     const containerRef = useRef(null);
-    const defaultValueRef = useRef(defaultValue);
+    // const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
 
     useLayoutEffect(() => {
@@ -35,8 +35,8 @@ const Editor = forwardRef(
           ref.current = quill;
         }
 
-        if (defaultValueRef.current) {
-            quill.setContents(defaultValueRef.current);
+        if (defaultValue) {
+            quill.setContents(defaultValue);
         }
 
         quill.on(Quill.events.TEXT_CHANGE, (...args) => {
@@ -50,7 +50,7 @@ const Editor = forwardRef(
             container.innerHTML = '';
           };
         // eslint-disable-next-line
-    }, [ref, onTextChange, placeholder, readOnly]);
+    }, [ref, onTextChange, placeholder, defaultValue]);
 
     useEffect(() => {
       const toolbar = document.getElementsByClassName("ql-toolbar");
@@ -83,7 +83,7 @@ const Editor = forwardRef(
           editor[0].style.cursor = "";
         }
       }
-    }, [])
+    }, [defaultValue])
 
     return <div ref={containerRef}></div>
   },

@@ -86,7 +86,7 @@ const MemberBoard = ((props) => {
         <>
             <div id="share-modal" className="flex mt-5 items-center">
                 <div className="w-1/12" title={member.name}>
-                    <div className="grid place-items-center w-10 h-10 bg-navbar-board-bg-color rounded-full" style={{backgroundColor: board.background.hex}}>
+                    <div className="grid place-items-center w-10 h-10 bg-navbar-board-bg-color rounded-full" style={{backgroundColor: `rgb(${(board.background.r)}, ${board.background.g}, ${board.background.b})`}}>
                         <div className='text-white font-bold cursor-default'>
                             {getFirstLetters(member.name)}
                         </div>

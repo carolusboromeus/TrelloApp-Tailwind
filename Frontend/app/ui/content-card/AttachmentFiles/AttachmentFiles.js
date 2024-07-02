@@ -10,7 +10,7 @@ import { DeleteAttchmentFile, EditAttchmentFile } from '../../buttons';
 
 const AttachmentFiles = (props) => {
     const {file, fileComment, setIsShowButtonComment, params, setBoard, setCard} = props;
-    const { setBoards, socket } = useVisibility();
+    const { setBoards, board, socket } = useVisibility();
 
     const [showEditFileName, setShowEditFileName] = useState(false); //show input
     const [valueFileName, setValueFileName] = useState(''); //to set value in variable valueTextArea
@@ -23,12 +23,12 @@ const AttachmentFiles = (props) => {
             return;
         }
 
-        const value = await EditAttchmentFile(params, file, valueFileName);
+        const value = await EditAttchmentFile(params, file, valueFileName, board);
         // setBoards(value.cardsR.columnsR.boardsR);
         setBoard(value.cardsR.columnsR.newBoard);
         setCard(value.nCard);
         socket.emit('updateCard', value.nCard);
-        socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+        socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
         setShowEditFileName(false);
     }
 
@@ -68,12 +68,12 @@ const AttachmentFiles = (props) => {
                                 fileComment(file);}}>Comment</button><span className='mx-1'>•</span> 
                             <button className='underline' onClick={() => window.location.replace(urlFile+file.data)}>Download</button><span className='mx-1'>•</span>  
                             <button className='underline' onClick={async () => {
-                                const value = await DeleteAttchmentFile(params, file);
+                                const value = await DeleteAttchmentFile(params, file, board);
                                 // setBoards(value.cardsR.columnsR.boardsR);
                                 setBoard(value.cardsR.columnsR.newBoard);
                                 setCard(value.nCard);
                                 socket.emit('updateCard', value.nCard);
-                                socket.emit('updateAllBoard', value.cardsR.columnsR.newBoard);
+                                socket.emit('updateBoard', value.cardsR.columnsR.newBoard);
                             }}>Delete</button><span className='mx-1'>•</span>
                             <button className='underline' onClick={() => setShowEditFileName(true)}>Edit</button>
                         </div>

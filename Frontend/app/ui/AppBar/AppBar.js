@@ -122,9 +122,17 @@ const DropdownToggle = () => {
 const AppBar = () => {
     const router = useRouter();
 
+    const handleChange = () => {
+        document.getElementsByClassName("trello-master")[0].style.backgroundImage = "";
+        document.getElementsByClassName("navbar-app")[0].style.backgroundColor = "";
+        // document.getElementsByClassName("navbar-board")[0].style.backgroundColor = "";
+        document.getElementsByClassName("sidebar")[0].style.backgroundColor = "";
+        document.getElementById("sidebar-title").style.backgroundColor = "";
+    };
+
     return(
-        <nav className="navbar-app px-2 py-1 pl-gap pb-ga flex items-center w-full border-b border-border-color">
-            <span className="text-sm md:text-xl w-11/12"><Link className="text-list-bg-color no-underline" href="/">Byon Task Management</Link></span>
+        <nav className="navbar-app px-2 py-1 pl-gap pb-ga flex items-center w-full border-b border-border-color bg-navbar-app-bg-color">
+            <span className="text-sm md:text-xl w-11/12"><Link className="text-list-bg-color no-underline" href="/" onClick={handleChange}>Byon Task Management</Link></span>
             <div className="w-1/12 flex flex-row-reverse">
                 <DropdownToggle/>
                 <button className="px-2 py-1 hover:bg-hover-icon hover:rounded-md" title='Notification Log' name='Notification Log' onClick={() => router.push('/notification-log')}>
