@@ -2,7 +2,6 @@ import Home from "@/app/home";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import 'font-awesome/css/font-awesome.min.css';
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import PropTypes from 'prop-types';
 

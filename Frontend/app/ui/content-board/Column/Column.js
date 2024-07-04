@@ -184,7 +184,7 @@ const Column = (props) => {
                         <DropdownMenu column={column} columns={columns} board={board} setBoard={setBoard} setBoards={setBoards} setColumns={setColumns}/>
                     </div>
                 </header>
-                <div className={`scrollbar-card pb-2 list-none m-0 max-h-[calc(100%-45px-36px)] overflow-y-auto ${isShowAddNewCard !== false ? "rounded-b-lg" : ""}`}>
+                <div className={`scrollbar-card py-1 list-none m-0 max-h-[calc(100%-45px-36px)]  ${isShowAddNewCard !== false ? "rounded-b-lg" : ""}`}>
                     <Droppable droppableId={column._id} type="CARD">
                         {(provided, snapshot) => (
                             <div ref={provided.innerRef} {...provided.droppableProps}
@@ -225,7 +225,7 @@ const Column = (props) => {
                     
                     
                     {isShowAddNewCard === true && 
-                        <div className='pb-2 pt-1 pl-3 pr-1 w-full'>
+                        <div className='pb-2 pt-1 px-2 w-full'>
                             <textarea 
                                 rows='2'
                                 className='px-2 py-1 w-full rounded-md resize-none focus:outline focus:outline-blue-500'

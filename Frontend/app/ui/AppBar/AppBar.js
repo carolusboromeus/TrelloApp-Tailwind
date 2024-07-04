@@ -128,6 +128,7 @@ const AppBar = () => {
         // document.getElementsByClassName("navbar-board")[0].style.backgroundColor = "";
         document.getElementsByClassName("sidebar")[0].style.backgroundColor = "";
         document.getElementById("sidebar-title").style.backgroundColor = "";
+        document.getElementById("boards-rows").style.backgroundColor = "";
     };
 
     return(
