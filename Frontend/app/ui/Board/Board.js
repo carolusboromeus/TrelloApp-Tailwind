@@ -66,7 +66,7 @@ const Board = ((props) => {
             >
                 <Link href={`/b/${board._id.slice(6, 14)}/${board.title.toLowerCase().replace(/ /g, "-")}`} className='w-full flex items-center text-left lg:p-1'>
                     <div className="w-4 h-3 lg:w-6 lg:h-5 mr-2 rounded border border-black/50" style={{backgroundColor: colorBackground}}></div>
-                    <label className="board-label cursor-pointer text-xs lg:text-base">{board.title}</label>
+                    <p className="board-label cursor-pointer text-xs lg:text-base">{board.title}</p>
                 </Link>
                 {showIcon && 
                     <div className="lg:p-1 rounded-md hover:bg-hover-button" onClick={() => toggleModel()}>

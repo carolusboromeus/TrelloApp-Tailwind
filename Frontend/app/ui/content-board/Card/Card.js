@@ -96,7 +96,7 @@ const Card = (props) => {
     return (
         <>
             {isShowEditCard === false &&
-                <div className="bg-white p-gap rounded-md shadow cursor-pointer mb-gap break-words mx-1 ml-3"
+                <div className="bg-white p-gap rounded-md shadow cursor-pointer my-2 break-words mx-2"
                     onMouseEnter={() => setIsShown(true)}
                     onMouseLeave={() => setIsShown(false)}
                 >

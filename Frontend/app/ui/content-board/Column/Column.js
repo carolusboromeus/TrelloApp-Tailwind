@@ -10,8 +10,7 @@ import { MODAL_ACTION_CLOSE, MODAL_ACTION_CONFIRM } from '@/app/utilities/consta
 
 import { useEffect, useRef, useState } from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
-import { Container, Draggable } from 'react-smooth-dnd';
-import { motion } from 'framer-motion';
+import { Droppable, Draggable } from '@hello-pangea/dnd';
 import PropTypes from 'prop-types';
 
 const DropdownMenu = (props) => {
@@ -91,13 +90,12 @@ DropdownMenu.propTypes = {
 
 const Column = (props) => {
 
-    const {column, onCardDrop, columns, board, params, setBoard, setColumns} = props;
-    const { isVisible, isSmallScreen, setBoards, socket } = useVisibility();
+    const {column, columns, board, params, setBoard, setColumns} = props;
+    const { setBoards, socket } = useVisibility();
     const cards = mapOrder(column.cards, column.cardOrder, 'id');
 
     //Change Title List
     const [titleColumn, setTitleColumn] = useState('');
-    const [isFirstClick, setIsFirstClick] = useState(true);
     const inputRef = useRef(null);
 
     useEffect(() => {
@@ -106,19 +104,8 @@ const Column = (props) => {
         }
     }, [column])
 
-    const selectAllText = (event) => {
-        setIsFirstClick(false);
-        
-        if(isFirstClick) {
-            event.target.select();
-        } else {
-            inputRef.current.setSelectionRange(titleColumn.length, titleColumn.length);
-        }
-    }
-
     const handleClickOutside = async () => {
         //Do something...
-        setIsFirstClick(true);
 
         const newColumn = {
             ...column,
@@ -130,6 +117,7 @@ const Column = (props) => {
         // setBoards(value.boardsR);
         setBoard(value.newBoard);
         setColumns(value.ncols);
+        setCanDrag(true);
         socket.emit('updateBoard', value.newBoard);
     }
 
@@ -159,62 +147,82 @@ const Column = (props) => {
         setIsShowAddNewCard(false);
     }
 
+    const [canDrag, setCanDrag] = useState(true);
+
+    useEffect(() => {
+        if(canDrag === false && inputRef.current !== null) {
+            inputRef.current.focus();
+            inputRef.current.select();
+        }
+    },[canDrag])
+
     return (
         <>
-            <motion.div className="w-80 ml-3 mt-1 h-svh max-h-[calc(100vh-300px)] sm:h-[calc(100vh-119px)] sm:max-h-fit *:bg-list-bg-color *:text-black *:pr-2" animate={{maxHeight: isVisible ? '' : isSmallScreen ? "calc(100vh - 150px)" : ''}}>
-                <header className="column-drag-handle flex pt-1 h-11 text-base font-bold rounded-t-lg cursor-pointer">
-                    <div className='w-10/12'>
-                        <input 
-                            type="text"
-                            value={titleColumn}
-                            className='mx-2 px-2 py-1 rounder-md cursor-pointer bg-inherit focus:outline-none focus:shadow'
-                            onClick={selectAllText}
-                            onChange={(event) => setTitleColumn(event.target.value)}
-                            spellCheck="false"
-                            onBlur={handleClickOutside}
-                            onMouseDown={(e) => e.preventDefault()}
-                            ref={inputRef}
-                        />
+            <div className="w-80 mx-2 mt-1 *:bg-list-bg-color *:text-black">
+                <header className="column-drag-handle flex py-1 px-1 h-11 text-base font-bold rounded-t-lg cursor-pointer">
+                    <div className='w-10/12 my-1'>
+                        {canDrag ? (
+                            <div className='mx-2 px-2 py-1 rounder-md cursor-pointer'
+                                onClick={() => setCanDrag(false)}>
+                                    {titleColumn}
+                            </div>
+                        ) : 
+                        (
+                            <input 
+                                type="text"
+                                value={titleColumn}
+                                className='mx-2 px-2 py-1 rounder-md cursor-pointer bg-inherit focus:outline-none focus:shadow'
+                                onChange={(event) => setTitleColumn(event.target.value)}
+                                spellCheck="false"
+                                onBlur={handleClickOutside}
+                                onMouseDown={(e) => e.preventDefault()}
+                                ref={inputRef}
+                            />
+                        )}
                     </div>
                     <div className='w-2/12'>
                         <DropdownMenu column={column} columns={columns} board={board} setBoard={setBoard} setBoards={setBoards} setColumns={setColumns}/>
                     </div>
                 </header>
                 <div className={`scrollbar-card list-none m-0 max-h-[calc(100%-45px-36px)] overflow-y-auto ${isShowAddNewCard !== false ? "rounded-b-lg" : ""}`}>
-                    <Container
-                        // {...column.props}
-
-                        groupName="col"
-                        onDrop={(dropResult) => onCardDrop(dropResult, column._id)}
-                        getChildPayload={index => cards[index]}
-                        dragClass="card-ghost"
-                        dropClass="card-ghost-drop"
-
-                        dropPlaceholder={{                      
-                        animationDuration: 150,
-                        showOnTop: true,
-                        className: 'card-drop-preview' 
-                        }}
-                        dropPlaceholderAnimationDuration={200}
-                    >
-                        {/* <Card/> */}
-                        {cards && cards.length > 0 && cards.map((card, index) => {
-                            return (
-                                
-                                <Draggable key={card._id}>
-                                    <Card 
-                                        card={card}
-                                        cards={cards}
-                                        columns={columns}
-                                        board={board}
-                                        params={params}
-                                        setBoard={setBoard}
-                                        setColumns={setColumns}
-                                    />
+                    <Droppable droppableId={column._id} type="CARD">
+                        {(provided, snapshot) => (
+                            <div ref={provided.innerRef} {...provided.droppableProps}
+                                className={`my-1 ${snapshot.isDraggingOver ? 'py-gap bg-gray-400/15 rounded-md' : ''}`}
+                            >
+                            {column.cards.map((card, cardIndex) => (
+                                <Draggable
+                                    key={card._id}
+                                    draggableId={card._id}
+                                    index={cardIndex}
+                                    type="CARD"
+                                >
+                                {(provided, snapshot) => (
+                                    <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        className={`${snapshot.isDragging ? 'dragging' : ''}`}
+                                        >
+                                            {/* {card.title} */}
+                                            <Card 
+                                                card={card}
+                                                cards={cards}
+                                                columns={columns}
+                                                board={board}
+                                                params={params}
+                                                setBoard={setBoard}
+                                                setColumns={setColumns}
+                                            />
+                                    </div>
+                                )}
                                 </Draggable>
-                            )
-                        })}
-                    </Container>
+                            ))}
+                            {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                    
                     
                     {isShowAddNewCard === true && 
                         <div className='pb-2 pt-1 pl-3 pr-1 w-full'>
@@ -252,7 +260,7 @@ const Column = (props) => {
                         </button>
                     </footer>
                 }
-            </motion.div>
+            </div>
         </>
     )
 }
@@ -261,7 +269,6 @@ Column.propTypes = {
     board: PropTypes.object.isRequired,
     columns: PropTypes.array.isRequired,
     column: PropTypes.object.isRequired,
-    onCardDrop: PropTypes.func.isRequired,
     params: PropTypes.object,
     setBoard: PropTypes.func.isRequired,
     setColumns: PropTypes.func.isRequired

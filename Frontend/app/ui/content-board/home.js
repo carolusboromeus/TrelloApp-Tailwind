@@ -52,12 +52,19 @@ const Home = ({params}) => {
                         socket.emit("leave-board", room, message => {
                             console.log(message)
                         })
-                    }
 
-                    socket.emit("join-board", board._id, message => {
-                        console.log(message);
-                        localStorage.setItem('room', board._id);
-                    });
+                        socket.emit("join-board", board._id, message => {
+                            console.log(message);
+                            localStorage.setItem('room', board._id);
+                        });
+                    }
+                    
+                    if(room === null){
+                        socket.emit("join-board", board._id, message => {
+                            console.log(message);
+                            localStorage.setItem('room', board._id);
+                        });
+                    }
 
                     socket.on('getUpdateBoard', data => {
                         if (data._id === board._id) {
