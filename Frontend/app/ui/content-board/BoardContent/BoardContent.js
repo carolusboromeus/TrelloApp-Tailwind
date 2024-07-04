@@ -173,67 +173,6 @@ const BoardContent = (props) => {
                     </div>                
                 }
             </motion.div>
-            {/* <Container
-                orientation="horizontal"
-                onDrop={onColumnDrop}
-                getChildPayload={index => columns[index]}
-                dragHandleSelector=".column-drag-handle"
-                dropPlaceholder={{
-                    animationDuration: 150,
-                    showOnTop: true,
-                    className: 'column-drop-preview'
-                }} >
-                
-                {columns && columns.length > 0 && columns.map((column, index) => {
-                    return(
-                        <Draggable key={column._id}>
-                            <Column
-                                columns={columns}
-                                column={column}
-                                board={board}
-                                onCardDrop={onCardDrop}
-                                params={params}
-                                setBoard={setBoard}
-                                setColumns={setColumns}
-                            />
-                        </Draggable>
-
-                    )
-                })}
-
-                {isShowAddList === false ? 
-                    <button className='w-60 h-10 leading-8 py-1 pl-4 text-white ml-gap mt-1 text-xs bg-hover-icon text-left hover:bg-hover-sidebar rounded-lg' onClick={() => setIsShowAddList(true)}>
-                        <i className='bi-plus-lg icon'></i> Add another column
-                    </button>
-
-                    :
-
-                    <div className='w-64 h-24 p-3 bg-list-bg-color/50 ml-2 mt-1 rounded-md'>
-                        <input 
-                            name='title'
-                            type='text'
-                            placeholder='Title column' 
-                            ref={inputRef}
-                            defaultValue={''}
-                            className='py-1.5 pr-8 pl-3 w-full rounded-md focus:outline focus:outline-blue-500' 
-                            onKeyDown={async (event) => {if(event.key === "Enter"){
-                                if(!event.target.value) {setIsShowAddList(false); return null} 
-                                
-                                const value = await CreateColumn(board, columns, event.target.value);
-                                // setBoards(value.boardsR);
-                                setBoard(value.newBoard);
-                                setColumns(value._columns);
-                                socket.emit('updateBoard', value.newBoard);
-                            }}}
-                            spellCheck='false'
-                        />
-                        <div className='mt-2 flex items-center'>
-                            <button type="submit" className='py-1 px-2 bg-green-600 text-white font-medium rounded-md hover:text-black hover:bg-hover-sidebar' onClick={() => handleCreateColumn()}>Add list</button>
-                            <button type='cancel' className='ml-2 text-xl bi-x px-2 py-1 rounded-md hover:bg-hover-icon' onClick={() => setIsShowAddList(false)}></button>
-                        </div>
-                    </div>                
-                }
-            </Container>  */}
         </div>
     )
 }

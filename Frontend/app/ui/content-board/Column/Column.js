@@ -159,7 +159,7 @@ const Column = (props) => {
     return (
         <>
             <div className="w-80 mx-2 mt-1 *:bg-list-bg-color *:text-black">
-                <header className="column-drag-handle flex py-1 px-1 h-11 text-base font-bold rounded-t-lg cursor-pointer">
+                <header className="column-drag-handle flex py-2 px-1 h-11 text-base font-bold rounded-t-lg cursor-pointer">
                     <div className='w-10/12 my-1'>
                         {canDrag ? (
                             <div className='mx-2 px-2 py-1 rounder-md cursor-pointer'
@@ -184,7 +184,7 @@ const Column = (props) => {
                         <DropdownMenu column={column} columns={columns} board={board} setBoard={setBoard} setBoards={setBoards} setColumns={setColumns}/>
                     </div>
                 </header>
-                <div className={`scrollbar-card list-none m-0 max-h-[calc(100%-45px-36px)] overflow-y-auto ${isShowAddNewCard !== false ? "rounded-b-lg" : ""}`}>
+                <div className={`scrollbar-card pb-2 list-none m-0 max-h-[calc(100%-45px-36px)] overflow-y-auto ${isShowAddNewCard !== false ? "rounded-b-lg" : ""}`}>
                     <Droppable droppableId={column._id} type="CARD">
                         {(provided, snapshot) => (
                             <div ref={provided.innerRef} {...provided.droppableProps}
