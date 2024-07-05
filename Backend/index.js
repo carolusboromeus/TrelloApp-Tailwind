@@ -62,9 +62,9 @@ app.get("/", cors(), (req, res) => {
     res.send("This is Home");
 });
 
-app.post("/post_file", upload.single("file") , controller.uploadFile);
+app.post("/file", upload.single("file") , controller.uploadFile);
 
-app.post("/delete_file", controller.deleteFile);
+app.delete("/file", controller.deleteFile);
 
 app.get("/files/:name", controller.downloadFile);
 
@@ -86,7 +86,7 @@ async function validToken() {
     }
 };
 
-app.get("/request_token", async (req, res) => {
+app.get("/token", async (req, res) => {
     const newToken = await validToken();
     if(newToken){
         res.send(newToken);

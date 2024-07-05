@@ -38,7 +38,7 @@ export const getData = (async () => {
         } 
         else if(!response.data){
             try{
-                const response = await axios.get(`${urlNode}/request_token`);
+                const response = await axios.get(`${urlNode}/token`);
                 if(response.data){
                     console.log("New Token: "+response.data);
                     token = response.data;
@@ -73,8 +73,8 @@ export const getMember = (async () => {
 
 export const deleteFile = (async (newFile) => {
     try{
-        await axios.post(`${urlNode}/delete_file`, {
-            newFile
+        await axios.delete(`${urlNode}/file`, {
+            data: {newFile: newFile}
         })
         
     } catch (error) {
@@ -84,7 +84,7 @@ export const deleteFile = (async (newFile) => {
 
 export const postFile = (async (formData) => {
     try{
-        const response = await axios.post(`${urlNode}/post_file`, formData, {
+        const response = await axios.post(`${urlNode}/file`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

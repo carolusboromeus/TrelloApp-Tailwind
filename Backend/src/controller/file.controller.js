@@ -23,6 +23,7 @@ const uploadFile = (req, res) => {
 
 const deleteFile = (req, res) => {
     const directoryPath = __basedir + "/assets/uploads/";
+    console.log(req.body);
     if(req.body.newFile && req.body.newFile._id){
         fs.unlink(`${directoryPath}${req.body.newFile.data}`, (err) => {
             if (err) {
