@@ -26,19 +26,19 @@ const DropdownToggle = () => {
         {"t":"Ocean Boat Blue","r":0,"g":121,"b":191,"a":1},
         {"t":"Munsell Blue","r":0,"g":151,"b":167,"a":1},
         {"t":"Dark Cyan","r":0,"g":150,"b":136,"a":1},
-        {"t":"Japanese Laurel","r":45,"g":134,"b":52,"a":1},
         {"t":"Palm Leaf","r":104,"g":159,"b":56,"a":1},
-        {"t":"Apple","r":76,"g":175,"b":80,"a":1},
-        {"t":"Philippine Orange","r":255,"g":111,"b":0,"a":1},
+        {"t":"Japanese Laurel","r":45,"g":134,"b":52,"a":1},
         {"t":"Giants Orange","r":255,"g":87,"b":34,"a":1},
         {"t":"Coral Red","r":244,"g":67,"b":54,"a":1},
         {"t":"Razzmatazz","r":233,"g":30,"b":99,"a":1},
         {"t":"Dark Orchid","r":156,"g":39,"b":176,"a":1},
+        {"t":"Dark Margenta","r":139, "g":0, "b":139, "a":1},
         {"t":"Plump Purple","r":103,"g":58,"b":183,"a":1},
+        {"t":"Indigo","r":75, "g":0, "b":130, "a":1},
         {"t":"Violet Blue","r":63,"g":81,"b":181,"a":1},
         {"t":"Police Blue","r":52,"g":70,"b":100,"a":1},
         {"t":"Tuscan Red","r":128,"g":48,"b":48,"a":1},
-        {"t":"Steel Teal","r":96,"g":125,"b":139,"a":1}
+        {"t":"Steel Teal","r":96,"g":125,"b":139,"a":1},
     ];
 
     useEffect(() => {
