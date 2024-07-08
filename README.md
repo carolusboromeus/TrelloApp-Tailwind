@@ -1,16 +1,18 @@
 ## Documenter Api
-https://documenter.getpostman.com/view/33351084/2sA3Qs9BmJ
+https://documenter.getpostman.com/view/36462194/2sA3e1DAkq
 
 ## Tools
 Node version 20.11.1.\
-Next verison 14.2.3.\
+Next verison 14.2.4.\
 React version 18.2.0.
 
 ## All dependencies on FrontEnd Folder
+"@headlessui/react": "^2.0.4",\
+"@hello-pangea/dnd": "^16.6.0",\
 "axios": "^1.6.8",\
-"bootstrap": "^5.3.3",\
 "bootstrap-icons": "^1.11.3",\
 "browser-image-compression": "^2.0.2",\
+"clsx": "^2.1.1",\
 "dateformat": "^5.0.3",\
 "font-awesome": "^4.7.0",\
 "framer-motion": "^11.2.2",\
@@ -18,28 +20,25 @@ React version 18.2.0.
 "javascript-time-ago": "^2.5.10",\
 "lodash": "^4.17.21",\
 "mongoose": "^8.3.4",\
-"next": "14.2.3",\
+"next": "14.2.4",\
 "quill": "^2.0.0",\
-"react": "^18",\
-"react-bootstrap": "^2.10.2",\
-"react-bootstrap-typeahead": "^6.3.2",\
-"react-color": "^2.19.3",\
+"react": "^18.2.0",\
 "react-datepicker": "^6.8.0",\
-"react-dom": "^18",\
+"react-dom": "^18.2.0",\
 "react-scripts": "5.0.1",\
-"react-smooth-dnd": "^0.11.1",\
 "react-time-ago": "^7.3.1",\
-"sass": "^1.75.0"
+"socket.io-client": "^4.7.5"
 
 ## All dependencies on BackEnd Folder
 "axios": "^1.6.8",\
 "cors": "^2.8.5",\
 "dotenv": "^16.4.5",\
 "express": "^4.19.2",\
-"mongoose": "^8.4.0",\
+"mongoose": "^8.4.4",\
 "multer": "^1.4.5-lts.1",\
 "node-cron": "^3.0.3",\
-"nodemon": "^3.1.0"
+"nodemon": "^3.1.0",\
+"socket.io": "^4.7.5"
 
 ## Available Scripts on FrontEnd Folder
 
