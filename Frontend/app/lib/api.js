@@ -29,7 +29,7 @@ export const postData = (async (newBoard, notification) => {
 export const getData = (async () => {
     let data = {};
     try{
-        const response = await axios.get("http://172.104.36.61:30007/cmsapi/kanban/view", axiosConfig)
+        const response = await axios.get("http://172.104.36.61:30007/cmsapi/kanban/view", axiosConfig);
         if(response.data){
             data = response.data;
             const boards = data.boards;
